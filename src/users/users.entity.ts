@@ -18,4 +18,7 @@ export class Users extends Model<IUsers, CreateUserDto> {
 
   @Column({ allowNull: false, defaultValue: 0 })
   money: number;
+
+  @Column({ allowNull: false, defaultValue: false })
+  confirmed: boolean;
 }

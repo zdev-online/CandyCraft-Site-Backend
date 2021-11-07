@@ -3,6 +3,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { join } from 'path';
 import { MailService } from './mail.service';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { Mail } from './mail.entity';
 
 @Module({
   imports: [
@@ -27,6 +29,7 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
         },
       },
     }),
+    SequelizeModule.forFeature([Mail]),
   ],
   providers: [MailService],
   exports: [MailService],
