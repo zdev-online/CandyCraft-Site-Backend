@@ -5,6 +5,8 @@ import { TokensModule } from './tokens/tokens.module';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { MailModule } from './mail/mail.module';
+import { GoogleService } from './google/google.service';
+import { GoogleModule } from './google/google.module';
 
 @Module({
   imports: [
@@ -27,8 +29,9 @@ import { MailModule } from './mail/mail.module';
     UsersModule,
     TokensModule,
     MailModule,
+    GoogleModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [GoogleService],
 })
 export class AppModule {}

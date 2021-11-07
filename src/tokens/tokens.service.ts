@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
+import { CreateRefreshDto } from './dto/create-refresh.dto';
 import { TokensPayloadDto } from './dto/tokens-payload.dto';
 import { Tokens } from './tokens.entity';
 
@@ -30,14 +31,24 @@ export class TokensService {
     return [access_token, refresh_token];
   }
   async validateRefresh(token: string): Promise<TokensPayloadDto> {
-    return await this.jwtService.verifyAsync(token, {
-      secret: this.JWT_ACCESS_SECRET,
-    });
+    try {
+      let data = await this.jwtService.verifyAsync(token, {
+        secret: this.JWT_ACCESS_SECRET,
+      });
+      return data;
+    } catch { 
+      return null;
+    }
   }
   async validateAccess(token: string): Promise<TokensPayloadDto> {
-    return await this.jwtService.verifyAsync(token, {
-      secret: this.JWT_REFRESH_SECRET,
-    });
+    try {
+      let data = await this.jwtService.verifyAsync(token, {
+        secret: this.JWT_REFRESH_SECRET,
+      });
+      return data;
+    } catch { 
+      return null;
+    }
   }
   private async generateAccessToken(
     payload: TokensPayloadDto,
@@ -55,27 +66,38 @@ export class TokensService {
       secret: this.JWT_REFRESH_SECRET,
     });
   }
-  async createOrRefreshToken(
-    refresh_token: string,
-    userId: number,
-  ): Promise<Tokens> {
-    let token = await this.tokensEntity.findOne({
+
+  async deleteRefreshToken(token: string): Promise<void> {
+    await this.tokensEntity.destroy({
       where: {
-        value: refresh_token,
-      },
-    });
-    if (token) {
-      token.value = refresh_token;
-      return await token.save();
-    }
-    return await this.tokensEntity.create({
-      userId,
-      value: refresh_token,
-      expiresIn: new Date(
-        new Date().getTime() + this.JWT_REFRESH_EXPIRES_NUMBER,
-      ),
+        value: token
+      }
     });
   }
+
+  async findRefreshTokenByValue(value: string): Promise<Tokens> {
+    const token = await this.tokensEntity.findOne({
+      where: {
+        value
+      }
+    });
+    return token;
+  }
+
+  async findRefreshTokenByUserId(userId: number): Promise<Tokens> {
+    const token = await this.tokensEntity.findOne({
+      where: {
+        userId
+      }
+    });
+    return token;
+  }
+
+  async saveRefreshToken(createRefreshDto: CreateRefreshDto): Promise<Tokens> {
+    let data = await this.tokensEntity.create(createRefreshDto);
+    return data;
+  }
+
 
   // Каждые 5 дней - очистка просроченных токенов!
   private async deleteExpiredTokens() {

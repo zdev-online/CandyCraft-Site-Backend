@@ -21,4 +21,7 @@ export class Users extends Model<IUsers, CreateUserDto> {
 
   @Column({ allowNull: false, defaultValue: false })
   confirmed: boolean;
+
+  @Column({ allowNull: false, defaultValue: 'user' })
+  role: string;
 }

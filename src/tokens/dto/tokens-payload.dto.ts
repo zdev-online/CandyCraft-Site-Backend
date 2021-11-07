@@ -4,4 +4,5 @@ export class TokensPayloadDto {
   username: string;
   email: string;
   confirmed: boolean;
+  id: number;
 }

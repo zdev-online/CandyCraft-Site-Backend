@@ -29,7 +29,16 @@ export class UsersService {
     let user = await this.usersEntity.findOne({
       where: {
         [Op.or]: [{ email }, { username }],
-      },
+      }
+    });
+    return user;
+  }
+
+  async findByEmail(email: string): Promise<Users> {
+    let user = await this.usersEntity.findOne({
+      where: {
+        email
+      }
     });
     return user;
   }
