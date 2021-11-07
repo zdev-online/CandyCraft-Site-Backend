@@ -10,6 +10,7 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
       transport: {
         host: process.env.MAIL_HOST,
         secure: process.env.MAIL_SECURE === 'true',
+        port: parseInt(process.env.MAIL_PORT),
         auth: {
           user: process.env.MAIL_USER,
           pass: process.env.MAIL_PASS,
@@ -28,6 +29,6 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
     }),
   ],
   providers: [MailService],
-  exports: [MailService]
+  exports: [MailService],
 })
-export class MailModule { }
+export class MailModule {}

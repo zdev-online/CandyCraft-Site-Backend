@@ -5,11 +5,8 @@ import { Tokens } from './tokens.entity';
 import { TokensService } from './tokens.service';
 
 @Module({
-  imports: [
-    JwtModule.register({}),
-    SequelizeModule.forFeature([Tokens])
-  ],
+  imports: [JwtModule.register({}), SequelizeModule.forFeature([Tokens])],
   providers: [TokensService],
-  exports: [TokensService]
+  exports: [TokensService],
 })
 export class TokensModule {}

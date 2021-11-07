@@ -5,11 +5,9 @@ import { Users } from './users.entity';
 import { UsersService } from './users.service';
 
 @Module({
-  imports: [
-    SequelizeModule.forFeature([Users])
-  ],
+  imports: [SequelizeModule.forFeature([Users])],
   controllers: [UsersController],
   providers: [UsersService],
-  exports: [UsersService]
+  exports: [UsersService],
 })
 export class UsersModule {}

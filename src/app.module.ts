@@ -19,15 +19,16 @@ import { MailModule } from './mail/mail.module';
       autoLoadModels: true,
       sync: {
         force: true,
-        alter: true
+        alter: true,
       },
-      synchronize: true
+      synchronize: true,
     }),
-    AuthModule, 
-    UsersModule, 
-    TokensModule, MailModule
+    AuthModule,
+    UsersModule,
+    TokensModule,
+    MailModule,
   ],
   controllers: [],
-  providers: []
+  providers: [],
 })
 export class AppModule {}

@@ -1,6 +1,6 @@
 export interface ITokens {
-    id: number;
-    value: string;
-    userId: number;
-    expiresIn: Date;
+  id: number;
+  value: string;
+  userId: number;
+  expiresIn: Date;
 }
