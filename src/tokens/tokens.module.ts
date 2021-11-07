@@ -1,9 +1,15 @@
 import { Module } from '@nestjs/common';
-import { TokensController } from './tokens.controller';
+import { JwtModule } from '@nestjs/jwt';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { Tokens } from './tokens.entity';
 import { TokensService } from './tokens.service';
 
 @Module({
-  controllers: [TokensController],
-  providers: [TokensService]
+  imports: [
+    JwtModule.register({}),
+    SequelizeModule.forFeature([Tokens])
+  ],
+  providers: [TokensService],
+  exports: [TokensService]
 })
 export class TokensModule {}
