@@ -67,6 +67,22 @@ export class TokensService {
     });
   }
 
+  async deleteManyByUserIds(userIds: number[]): Promise<number> {
+    return await this.tokensEntity.destroy({
+      where: {
+        [Op.or]: (() => {
+          const queryArray = [];
+          for (let i = 0; i < userIds.length; i++) {
+            queryArray.push({
+              userId: userIds[i]
+            });
+          }
+          return queryArray;
+        })()
+      }
+    });
+  }
+
   async deleteRefreshToken(token: string): Promise<void> {
     await this.tokensEntity.destroy({
       where: {

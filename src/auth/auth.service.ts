@@ -131,9 +131,18 @@ export class AuthService {
     user.confirmed = true;
     await user.save();
     await mail.destroy();
+    const [access_token, refresh_token] = await this.tokensService.generateTokens({
+      confirmed: user.confirmed,
+      email: user.email,
+      role: user.role,
+      userId: user.id,
+      username: user.username,
+      id: user.id
+    });
     return {
       message: 'E-Mail успешно подтвержден',
-      devInfo: 'Сделайте запрос на /auth/refresh, чтобы обновить токен'
+      access_token,
+      refresh_token
     }
   }
 
@@ -141,8 +150,9 @@ export class AuthService {
     try {
       const mailes = await this.mailService.findExpiredMails();
       if (mailes.length) {
-        const deleted = await this.usersService.deleteManyByIds(mailes.map(x => x.userId));
-        console.log(`Удалено пользователей - не подтвердивших E-Mail: ${deleted}`);
+        let userIds = mailes.map(x => x.userId);
+        await this.usersService.deleteManyByIds(userIds);
+        await this.tokensService.deleteManyByUserIds(userIds)
       }
     } catch (e) {
       console.error(`Не удалось удалить полльзователей, которые не подтвердили E-Mail`);
