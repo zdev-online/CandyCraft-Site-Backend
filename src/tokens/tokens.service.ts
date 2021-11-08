@@ -36,7 +36,7 @@ export class TokensService {
         secret: this.JWT_ACCESS_SECRET,
       });
       return data;
-    } catch { 
+    } catch {
       return null;
     }
   }
@@ -46,7 +46,7 @@ export class TokensService {
         secret: this.JWT_REFRESH_SECRET,
       });
       return data;
-    } catch { 
+    } catch {
       return null;
     }
   }

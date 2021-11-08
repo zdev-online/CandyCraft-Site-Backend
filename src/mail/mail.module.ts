@@ -15,8 +15,8 @@ import { Mail } from './mail.entity';
         port: parseInt(process.env.MAIL_PORT),
         auth: {
           user: process.env.MAIL_USER,
-          pass: process.env.MAIL_PASS,
-        },
+          pass: process.env.MAIL_PASS
+        }
       },
       defaults: {
         from: process.env.MAIL_FROM,
@@ -24,10 +24,8 @@ import { Mail } from './mail.entity';
       template: {
         dir: join(__dirname, 'templates'),
         adapter: new EjsAdapter(),
-        options: {
-          strict: true,
-        },
-      },
+        options: {}
+      }
     }),
     SequelizeModule.forFeature([Mail]),
   ],

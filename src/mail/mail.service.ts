@@ -11,7 +11,7 @@ export class MailService {
   constructor(
     private mailerService: MailerService,
     @InjectModel(Mail) private mailEntity: typeof Mail,
-  ) {}
+  ) { }
 
   async sendEmailConfirmation(email: string, username: string, token: string) {
     const url = `${process.env.SITE_URL}/confirm/email/${token}`;
@@ -20,18 +20,16 @@ export class MailService {
       subject: 'Завершите регистрацию в CandyCraft - подтвердите E-Mail!',
       template: './email-confirm',
       context: {
-        url,
         username,
         email,
-      },
+        url
+      }
     });
     return true;
   }
 
   generateToken(): string {
-    return uuid.v4({
-      random: Buffer.from(`${Math.random() * 1000 + new Date().getTime()}`),
-    });
+    return uuid.v4();
   }
 
   async createConfirmationEmail(mail: CreateMailDto) {
@@ -45,7 +43,16 @@ export class MailService {
           [Op.lte]: new Date()
         }
       }
-    }); 
+    });
     return mailes;
+  }
+
+  async findByToken(token: string): Promise<Mail> {
+    let mail = this.mailEntity.findOne({
+      where: {
+        token
+      }
+    });
+    return mail;
   }
 }

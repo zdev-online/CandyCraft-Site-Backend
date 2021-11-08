@@ -51,12 +51,12 @@ export class AuthService {
         message: 'Пароли не совпадают',
       });
     }
-    const isCorrectCaptcha = await this.googleService.verifyCaptcha(dto.captcha_token);
-    if (!isCorrectCaptcha) {
-      throw new BadRequestException({
-        message: 'Неверная капча'
-      });
-    }
+    // const isCorrectCaptcha = await this.googleService.verifyCaptcha(dto.captcha_token);
+    // if (!isCorrectCaptcha) {
+    //   throw new BadRequestException({
+    //     message: 'Неверная капча'
+    //   });
+    // }
     const candidate = await this.usersService.findByEmailAndUsername(dto.email, dto.username);
     if (candidate) {
       throw new BadRequestException({
@@ -119,6 +119,21 @@ export class AuthService {
       access_token,
       refresh_token,
       ...new UsersSerialize(user)
+    }
+  }
+
+  async confirmEmail(token: string){
+    const mail = await this.mailService.findByToken(token);
+    if(!mail){
+      throw new BadRequestException({ message: 'Ссылка просрочена, либо уже аккаунт уже активирован' })
+    }
+    const user = await this.usersService.findById(mail.userId);
+    user.confirmed = true;
+    await user.save();
+    await mail.destroy();
+    return {
+      message: 'E-Mail успешно подтвержден',
+      devInfo: 'Сделайте запрос на /auth/refresh, чтобы обновить токен'
     }
   }
 
