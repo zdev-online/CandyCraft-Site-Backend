@@ -14,7 +14,9 @@ export class AuthService {
     private tokensService: TokensService,
     private mailService: MailService,
     private googleService: GoogleService
-  ) { }
+  ) { 
+    this.deleteUnconfirmedUsers();
+  }
 
   async signin(dto: AuthUserRequestDto) {
     const user = await this.usersService.findByEmail(dto.email);
@@ -117,6 +119,20 @@ export class AuthService {
       access_token,
       refresh_token,
       ...new UsersSerialize(user)
+    }
+  }
+
+  private async deleteUnconfirmedUsers(){
+    try {
+      const mailes = await this.mailService.findExpiredMails();
+      if(mailes.length){
+        const deleted = await this.usersService.deleteManyByIds(mailes.map(x => x.userId));
+        console.log(`Удалено пользователей - не подтвердивших E-Mail: ${deleted}`);
+      }
+    } catch(e){
+      console.error(`Не удалось удалить полльзователей, которые не подтвердили E-Mail`);
+    } finally {
+      setTimeout(this.deleteUnconfirmedUsers, 1000 * 60 * 60 * 15);
     }
   }
 }

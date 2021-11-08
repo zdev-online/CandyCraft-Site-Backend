@@ -43,6 +43,24 @@ export class UsersService {
     return user;
   }
 
+  async deleteManyByIds(userIds: number[]): Promise<number>{
+    const deleted = await this.usersEntity.destroy({
+      where: {
+        [Op.or]: (() => {
+          const queryArray = [];
+          for (let i = 0; i < userIds.length; i++) {
+            queryArray.push({
+              userId: userIds[i],
+              confirmed: false
+            });
+          }
+          return queryArray;
+        })()
+      }
+    });
+    return deleted;
+  }
+
   isValidPassword(candidate: string, password: string): boolean {
     return bcrypt.compareSync(candidate, password);
   }

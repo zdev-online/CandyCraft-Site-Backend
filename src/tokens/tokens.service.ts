@@ -98,7 +98,6 @@ export class TokensService {
     return data;
   }
 
-
   // Каждые 5 дней - очистка просроченных токенов!
   private async deleteExpiredTokens() {
     let number = await this.tokensEntity

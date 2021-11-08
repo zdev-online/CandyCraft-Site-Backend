@@ -1,6 +1,7 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
 import * as uuid from 'uuid';
 import { CreateMailDto } from './dto/create-mail';
 import { Mail } from './mail.entity';
@@ -35,5 +36,16 @@ export class MailService {
 
   async createConfirmationEmail(mail: CreateMailDto) {
     return await this.mailEntity.create(mail);
+  }
+
+  async findExpiredMails(): Promise<Mail[]> {
+    const mailes = this.mailEntity.findAll({
+      where: {
+        expiresIn: {
+          [Op.lte]: new Date()
+        }
+      }
+    }); 
+    return mailes;
   }
 }
