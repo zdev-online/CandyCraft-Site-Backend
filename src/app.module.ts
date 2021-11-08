@@ -7,10 +7,15 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { MailModule } from './mail/mail.module';
 import { GoogleService } from './google/google.service';
 import { GoogleModule } from './google/google.module';
+import { PexService } from './pex/pex.service';
+import { PexModule } from './pex/pex.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ envFilePath: `.${process.env.MODE}.env` }),
+    ConfigModule.forRoot({ 
+      envFilePath: `.${process.env.MODE}.env`, 
+      isGlobal: true 
+    }),
     SequelizeModule.forRoot({
       dialect: 'mysql',
       host: process.env.MYSQL_HOST,
@@ -30,8 +35,9 @@ import { GoogleModule } from './google/google.module';
     TokensModule,
     MailModule,
     GoogleModule,
+    PexModule,
   ],
   controllers: [],
-  providers: [GoogleService],
+  providers: [],
 })
 export class AppModule {}

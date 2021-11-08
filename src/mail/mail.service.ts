@@ -14,7 +14,7 @@ export class MailService {
   ) { }
 
   async sendEmailConfirmation(email: string, username: string, token: string) {
-    const url = `${process.env.SITE_URL}/confirm/email/${token}`;
+    const url = `${process.env.SITE_URL}/auth/confirm/email/${token}`;
     await this.mailerService.sendMail({
       to: email,
       subject: 'Завершите регистрацию в CandyCraft - подтвердите E-Mail!',
@@ -33,7 +33,8 @@ export class MailService {
   }
 
   async createConfirmationEmail(mail: CreateMailDto) {
-    return await this.mailEntity.create(mail);
+    let data = await this.mailEntity.create(mail);
+    return data;
   }
 
   async findExpiredMails(): Promise<Mail[]> {

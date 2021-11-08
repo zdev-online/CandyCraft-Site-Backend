@@ -1,4 +1,5 @@
-import { Column, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import { v4 } from 'uuid';
 import { CreateUserDto } from './dto/create-user.dto';
 import { IUsers } from './users.interface';
 
@@ -6,6 +7,14 @@ import { IUsers } from './users.interface';
 export class Users extends Model<IUsers, CreateUserDto> {
   @Column({ unique: true, autoIncrement: true, primaryKey: true })
   id: number;
+
+  @Column({ 
+    unique: true, 
+    allowNull: false, 
+    defaultValue: DataType.UUIDV4,
+    type: DataType.UUID
+  })
+  uuid: string;
 
   @Column({ unique: true, allowNull: false })
   email: string;

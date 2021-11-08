@@ -14,7 +14,7 @@ export class AuthService {
     private tokensService: TokensService,
     private mailService: MailService,
     private googleService: GoogleService
-  ) { 
+  ) {
     this.deleteUnconfirmedUsers();
   }
 
@@ -35,7 +35,7 @@ export class AuthService {
     return {
       access_token,
       refresh_token,
-      ...new UsersSerialize(user),
+      user: { ...new UsersSerialize(user) },
       message: 'Успешная авторизация'
     }
   }
@@ -84,7 +84,7 @@ export class AuthService {
       decs: 'Если почта не будет подтверждена в течении 30 минут - аккаунт будет удален',
       access_token,
       refresh_token,
-      ...new UsersSerialize(user)
+      user: { ...new UsersSerialize(user) }
     }
   }
 
@@ -97,12 +97,12 @@ export class AuthService {
 
   async refresh(value: string) {
     const isValid = await this.tokensService.validateRefresh(value);
-    if(!isValid){
+    if (!isValid) {
       throw new BadRequestException({ message: 'Вы не авторизованы' });
     }
     const token = await this.tokensService.findRefreshTokenByUserId(isValid.userId);
     const user = await this.usersService.findById(isValid.userId);
-    if(!user){
+    if (!user) {
       throw new BadRequestException({ message: 'Вы не авторизованы' });
     }
     const [access_token, refresh_token] = await this.tokensService.generateTokens({
@@ -118,13 +118,13 @@ export class AuthService {
     return {
       access_token,
       refresh_token,
-      ...new UsersSerialize(user)
+      user: { ...new UsersSerialize(user) }
     }
   }
 
-  async confirmEmail(token: string){
+  async confirmEmail(token: string) {
     const mail = await this.mailService.findByToken(token);
-    if(!mail){
+    if (!mail) {
       throw new BadRequestException({ message: 'Ссылка просрочена, либо уже аккаунт уже активирован' })
     }
     const user = await this.usersService.findById(mail.userId);
@@ -137,14 +137,14 @@ export class AuthService {
     }
   }
 
-  private async deleteUnconfirmedUsers(){
+  private async deleteUnconfirmedUsers() {
     try {
       const mailes = await this.mailService.findExpiredMails();
-      if(mailes.length){
+      if (mailes.length) {
         const deleted = await this.usersService.deleteManyByIds(mailes.map(x => x.userId));
         console.log(`Удалено пользователей - не подтвердивших E-Mail: ${deleted}`);
       }
-    } catch(e){
+    } catch (e) {
       console.error(`Не удалось удалить полльзователей, которые не подтвердили E-Mail`);
     } finally {
       setTimeout(this.deleteUnconfirmedUsers, 1000 * 60 * 60 * 15);

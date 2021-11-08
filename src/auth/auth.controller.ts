@@ -11,7 +11,7 @@ export class AuthController {
     ) { }
 
     @Post('/signin')
-    async signin(@Body() dto: AuthUserRequestDto, @Res() res: Response) {
+    async signin(@Body() dto: AuthUserRequestDto, @Res({ passthrough: true }) res: Response) {
         const data = await this.authService.signin(dto);
         res.cookie('Refresh-Token', data.refresh_token, {
             path: '/auth',
@@ -22,7 +22,7 @@ export class AuthController {
     }
 
     @Post('/signup')
-    async signup(@Body() dto: CreateUserRequestDto, @Res() res: Response) {
+    async signup(@Body() dto: CreateUserRequestDto, @Res({ passthrough: true }) res: Response) {
         const data = await this.authService.signup(dto);
         res.cookie('Refresh-Token', data.refresh_token, {
             path: '/auth',
@@ -33,7 +33,7 @@ export class AuthController {
     }
 
     @Post('/logout')
-    async logout(@Req() req: Request, @Res() res: Response) {
+    async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
         const refresh_token = req.cookies['Refresh-Token'];
         await this.authService.logout(refresh_token);
         res.clearCookie('Refresh-Token');
@@ -41,7 +41,7 @@ export class AuthController {
     }
 
     @Post('/refresh')
-    async refresh(@Req() req: Request, @Res() res: Response) { 
+    async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) { 
         const refresh_token = req.cookies['Refresh-Token'];
         let data = await this.authService.refresh(refresh_token);
         return data;
