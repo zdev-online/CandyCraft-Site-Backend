@@ -7,7 +7,7 @@ import { IPermissions } from './permissions.interface';
 
 @Injectable()
 export class PexService {
-  constructor(@InjectConnection() private connection: Sequelize) {}
+  constructor(@InjectConnection() private connection: Sequelize) { }
 
   // Добавить группу прав (e.g VIP, Premium, Titan)
   async addPermissionsGroup(
@@ -56,13 +56,68 @@ export class PexService {
   }
 
   // Удалить группу прав
-  async deletePermissionsGroup(prefix: string) {}
+  async deletePermissionsGroup(prefix: string, groupName: string) {
+    let transaction = await this.connection.transaction();
+    try {
+      let players: Inheritance[] = await this.connection.query({
+        query: `SELECT * FROM ${prefix}_pex_inheritance WHERE parent = ?`,
+        values: [groupName]
+      }, {
+        type: QueryTypes.SELECT
+      }) as any;
+      let deletePlayersQuery: string[] = [];
+      for (let i = 0; i < players.length; i++) {
+        deletePlayersQuery.push(`name = ${players[i].child}`);
+      }
+      this.connection.query({
+        query: `DELETE * FROM ${prefix}_pex_entity WHERE name = ?`,
+        values: [groupName]
+      }, {
+        type: QueryTypes.DELETE,
+        transaction
+      });
+      players.length && await this.connection.query({
+        query: `DELETE * FROM ${prefix}_pex_inheritance WHERE parent = ? AND ${players.map(x => `child = ${x.child}`).join(' OR')}`,
+        values: [groupName]
+      }, {
+        type: QueryTypes.DELETE,
+        transaction
+      });
+      await this.connection.query({
+        query: `DELETE * FROM ${prefix}_pex_permissions WHERE name = ?`,
+        values: [groupName]
+      }, {
+        type: QueryTypes.DELETE,
+        transaction
+      });
+      await transaction.commit();
+      return true;
+    } catch (e) {
+      await transaction.rollback();
+      return false;
+    }
+  }
 
   // Удалить права из группы
-  async deletePermissionsFromGroup(prefix: string) {}
+  deletePermissionsFromGroup(prefix: string, groupName: string, delete_perms: string[]) {
+    for(let i = 0; i < delete_perms.length; i++){
+      this.connection.query({
+        query: `DELETE FROM ${prefix}_pex_permissions WHERE name = ? AND permission = ?`,
+        values: [groupName, delete_perms[i]]
+      });
+    }
+    return true;
+  }
 
   // Удалить права у игрока
-  async deletePlayerFromGroup(prefix: string) {}
+  async deletePlayerFromGroup(prefix: string, uuid: string, groupName: string) { 
+    await this.connection.query({
+      query: `DELETE FROM ${prefix}_pex_inheritance WHERE child = ? AND parent = ?`,
+      values: [uuid, groupName]
+    }, { type: QueryTypes.DELETE });
+    return true;
+
+  }
 
   // Найти группу по названию
   async findPermsByGroupName(
@@ -81,14 +136,36 @@ export class PexService {
     return result;
   }
 
-  // НАйти группу по ID
-  async findGroupById(prefix: string) {}
-
   // Найти игроков, которые в определенной группе
-  async findPlayersByGroup(prefix: string) {}
+  async findPlayersByGroup(prefix: string, groupName: string) {
+    let result = await this.connection.query({
+      query: `SELECT * FROM ${prefix}_pex_inheritance, ${prefix}_pex_permissions WHERE ${prefix}_pex_inheritance.parent = ${prefix}_pex_permissions.name AND ${prefix}_pex_inheritance.parent = ?`,
+      values: [groupName]
+    }, { type: QueryTypes.SELECT }) as any;
+    let data = result as (Inheritance & IPermissions)[];
+    let players = [];
+    for (let i = 0; i < data.length; i++) {
+      for (let j = 0; j < players.length; j++) {
+        if (data[i].child == players[j].uuid) {
+          players[j].permissions.push(data[i].permission);
+        } else {
+          players.push({ uuid: data[i].child, permissions: [] });
+        }
+      }
+    }
+    return { group: groupName, players };
+  }
 
   // Найти игроков по ID
-  async findPlayersById(prefix: string) {}
+  async findPlayersById(prefix: string, uuid: string) {
+    let result = await this.connection.query({
+      query: `SELECT * FROM ${prefix}_pex_inheritance WHERE child = ?`,
+      values: [uuid]
+    }, { type: QueryTypes.SELECT });
+    let player: Inheritance = result[0] as Inheritance;
+    let permissions = await this.findPermsByGroupName(prefix, player.parent);
+    return { uuid, permissions };
+  }
 
   /* 
         type: 
