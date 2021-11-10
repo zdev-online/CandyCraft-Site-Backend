@@ -74,28 +74,28 @@ export class TokensService {
           const queryArray = [];
           for (let i = 0; i < userIds.length; i++) {
             queryArray.push({
-              userId: userIds[i]
+              userId: userIds[i],
             });
           }
           return queryArray;
-        })()
-      }
+        })(),
+      },
     });
   }
 
   async deleteRefreshToken(token: string): Promise<void> {
     await this.tokensEntity.destroy({
       where: {
-        value: token
-      }
+        value: token,
+      },
     });
   }
 
   async findRefreshTokenByValue(value: string): Promise<Tokens> {
     const token = await this.tokensEntity.findOne({
       where: {
-        value
-      }
+        value,
+      },
     });
     return token;
   }
@@ -103,8 +103,8 @@ export class TokensService {
   async findRefreshTokenByUserId(userId: number): Promise<Tokens> {
     const token = await this.tokensEntity.findOne({
       where: {
-        userId
-      }
+        userId,
+      },
     });
     return token;
   }

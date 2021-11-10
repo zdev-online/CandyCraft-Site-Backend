@@ -12,9 +12,9 @@ import { PexModule } from './pex/pex.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ 
-      envFilePath: `.${process.env.MODE}.env`, 
-      isGlobal: true 
+    ConfigModule.forRoot({
+      envFilePath: `.${process.env.MODE}.env`,
+      isGlobal: true,
     }),
     SequelizeModule.forRoot({
       dialect: 'mysql',

@@ -29,7 +29,7 @@ export class UsersService {
     let user = await this.usersEntity.findOne({
       where: {
         [Op.or]: [{ email }, { username }],
-      }
+      },
     });
     return user;
   }
@@ -37,13 +37,13 @@ export class UsersService {
   async findByEmail(email: string): Promise<Users> {
     let user = await this.usersEntity.findOne({
       where: {
-        email
-      }
+        email,
+      },
     });
     return user;
   }
 
-  async deleteManyByIds(userIds: number[]): Promise<number>{
+  async deleteManyByIds(userIds: number[]): Promise<number> {
     const deleted = await this.usersEntity.destroy({
       where: {
         [Op.or]: (() => {
@@ -51,12 +51,12 @@ export class UsersService {
           for (let i = 0; i < userIds.length; i++) {
             queryArray.push({
               userId: userIds[i],
-              confirmed: false
+              confirmed: false,
             });
           }
           return queryArray;
-        })()
-      }
+        })(),
+      },
     });
     return deleted;
   }

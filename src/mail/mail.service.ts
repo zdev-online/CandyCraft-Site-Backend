@@ -11,7 +11,7 @@ export class MailService {
   constructor(
     private mailerService: MailerService,
     @InjectModel(Mail) private mailEntity: typeof Mail,
-  ) { }
+  ) {}
 
   async sendEmailConfirmation(email: string, username: string, token: string) {
     const url = `${process.env.SITE_URL}/auth/confirm/email/${token}`;
@@ -22,8 +22,8 @@ export class MailService {
       context: {
         username,
         email,
-        url
-      }
+        url,
+      },
     });
     return true;
   }
@@ -41,9 +41,9 @@ export class MailService {
     const mailes = this.mailEntity.findAll({
       where: {
         expiresIn: {
-          [Op.lte]: new Date()
-        }
-      }
+          [Op.lte]: new Date(),
+        },
+      },
     });
     return mailes;
   }
@@ -51,8 +51,8 @@ export class MailService {
   async findByToken(token: string): Promise<Mail> {
     let mail = this.mailEntity.findOne({
       where: {
-        token
-      }
+        token,
+      },
     });
     return mail;
   }

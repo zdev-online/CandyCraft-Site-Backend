@@ -10,16 +10,18 @@ async function bootstrap() {
   app.use(cors({ origin: '*' }));
   app.use(helmet());
   app.use(cookie_parser());
-  app.useGlobalPipes(new ValidationPipe({
-    exceptionFactory: (errors) => {
-      for (let i = 0; i < errors.length; i++) {
-        delete errors[i].target;
-      }
-      return new BadRequestException(errors, 'Ошибка валидации данных')
-    },
-    transform: true,
-    whitelist: true
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      exceptionFactory: (errors) => {
+        for (let i = 0; i < errors.length; i++) {
+          delete errors[i].target;
+        }
+        return new BadRequestException(errors, 'Ошибка валидации данных');
+      },
+      transform: true,
+      whitelist: true,
+    }),
+  );
   await app.listen(process.env.PORT || 5000);
   console.log(`Server listen ${process.env.PORT || 5000}`);
 }

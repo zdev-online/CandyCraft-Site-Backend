@@ -1,13 +1,19 @@
-import { IsString, MinLength, MaxLength, IsEmail, IsBoolean, IsNotEmpty } from "class-validator";
+import {
+  IsString,
+  MinLength,
+  MaxLength,
+  IsEmail,
+  IsBoolean,
+  IsNotEmpty,
+} from 'class-validator';
 
 export class CreateUserRequestDto {
-
-  @IsNotEmpty({ message: 'Некорректный E-Mail '})
+  @IsNotEmpty({ message: 'Некорректный E-Mail ' })
   @IsString({ message: 'Некорректный E-Mail' })
   @IsEmail({}, { message: 'Некорректный E-Mail' })
   email: string;
 
-  @IsNotEmpty({ message: 'Укажите никнейм'})
+  @IsNotEmpty({ message: 'Укажите никнейм' })
   @IsString({ message: 'Укажите никнейм' })
   username: string;
 
@@ -20,7 +26,7 @@ export class CreateUserRequestDto {
   @IsNotEmpty({ message: 'Подтвердите пароль' })
   @IsString({ message: 'Подтвердите пароль' })
   password_confirm: string;
-  
+
   @IsNotEmpty({ message: 'Неверная капча' })
   @IsString({ message: 'Неверный капча' })
   captcha_token: string;

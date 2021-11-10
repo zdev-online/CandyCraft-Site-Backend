@@ -8,11 +8,11 @@ export class Users extends Model<IUsers, CreateUserDto> {
   @Column({ unique: true, autoIncrement: true, primaryKey: true })
   id: number;
 
-  @Column({ 
-    unique: true, 
-    allowNull: false, 
+  @Column({
+    unique: true,
+    allowNull: false,
     defaultValue: DataType.UUIDV4,
-    type: DataType.UUID
+    type: DataType.UUID,
   })
   uuid: string;
 

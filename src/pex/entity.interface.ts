@@ -1,6 +1,6 @@
 export interface IEntity {
-    id: number;
-    name: string;
-    type: boolean;
-    default: boolean;
+  id: number;
+  name: string;
+  type: number;
+  default: number;
 }
