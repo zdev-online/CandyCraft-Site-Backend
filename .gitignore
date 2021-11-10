@@ -1,5 +1,6 @@
 .dev.env
 .prod.env
+topcraft_gift.php
 
 # compiled output
 /dist

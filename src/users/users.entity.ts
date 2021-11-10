@@ -33,4 +33,7 @@ export class Users extends Model<IUsers, CreateUserDto> {
 
   @Column({ allowNull: false, defaultValue: 'user' })
   role: string;
+
+  @Column({ allowNull: false, defaultValue: '/skins/default.png' })
+  skinPath: string;
 }

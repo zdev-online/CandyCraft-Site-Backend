@@ -6,4 +6,5 @@ export interface IUsers {
   money: number;
   confirmed: boolean;
   role: string;
+  skinPath: string;
 }

@@ -1,13 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Users } from './users.entity';
 import * as bcrypt from 'bcrypt';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(Users) private usersEntity: typeof Users) {}
+  
+  async changePassword(dto: ChangePasswordDto){
+    let user = await this.usersEntity.findByPk();
+    if(!this.isValidPassword(dto.old_password, user.password)){
+      throw new BadRequestException({ message: 'Неверный пароль' });
+    }
+    if(dto.new_password != dto.new_password_confirm){ 
+      throw new BadRequestException({ message: 'Пароли не совпадают' });
+    }
+    user.password = this.hashPassword(dto.new_password);
+    await user.save();
+    return { message: 'Пароль успешно сменен' }
+  }
+  
+  async changeSkin(dto){}
 
   async create(user: CreateUserDto): Promise<Users> {
     let new_user = await this.usersEntity.create({
