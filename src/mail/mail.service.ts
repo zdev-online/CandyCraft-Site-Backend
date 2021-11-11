@@ -32,6 +32,21 @@ export class MailService {
     return uuid.v4();
   }
 
+  async sendPasswordRestore(email: string, username: string, token: string){
+    const url = `${process.env.SITE_URL}/auth/restore/${token}`;
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Восстановление пароля на CandyCraft - Перейдите по ссылке',
+      template: './password-restore',
+      context: {
+        username,
+        email,
+        url,
+      },
+    });
+    return true;
+  }
+
   async createConfirmationEmail(mail: CreateMailDto) {
     let data = await this.mailEntity.create(mail);
     return data;

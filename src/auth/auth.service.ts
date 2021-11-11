@@ -6,6 +6,10 @@ import { UsersService } from 'src/users/users.service';
 import { AuthUserRequestDto } from './dto/auth-user-request.dto';
 import { GoogleService } from 'src/google/google.service';
 import { UsersSerialize } from './dto/user-serialize.dto';
+import { Restore } from './restore.entity';
+import { InjectModel } from '@nestjs/sequelize';
+import { v4 } from 'uuid';
+import { EndRestoreDto } from './dto/end-restore.dto';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +18,7 @@ export class AuthService {
     private tokensService: TokensService,
     private mailService: MailService,
     private googleService: GoogleService,
+    @InjectModel(Restore) private restoreEntity: typeof Restore
   ) {
     this.deleteUnconfirmedUsers();
   }
@@ -165,6 +170,37 @@ export class AuthService {
       access_token,
       refresh_token,
     };
+  }
+
+  async startRestorePassword(email: string){
+    let user = await this.usersService.findByEmail(email);
+    if(!user){
+      throw new BadRequestException({ message: 'Пользователь с таким E-Mail - не найден' })
+    }
+    let restore = await this.restoreEntity.create({ 
+      userId: user.id,
+      token: v4()
+    });
+    return { message: 'Письмо с ссылкой на восстановление пароля отправлено на ваш E-Mail' }
+  }
+
+  async endRestorePassword(dto: EndRestoreDto){
+      let restore = await this.restoreEntity.findOne({ 
+        where: {
+          token: dto.token
+        }
+      });
+      if(!restore){
+        throw new BadRequestException({ message: "Неверный токен восстановления" });
+      }
+      if(dto.password != dto.password_confirm){
+        throw new BadRequestException({ message: 'Пароли не совпадают' });
+      }
+
+      let user = await this.usersService.findById(restore.userId);
+      user.password = this.usersService.hashPassword(dto.password);
+      await user.save();
+      return { message: 'Пароль успешно сменен - войдите в свой аккаунт' }
   }
 
   private async deleteUnconfirmedUsers() {

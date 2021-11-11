@@ -82,7 +82,7 @@ export class UsersService {
     return bcrypt.compareSync(candidate, password);
   }
 
-  private hashPassword(password: string) {
+  hashPassword(password: string) {
     return bcrypt.hashSync(password, 15);
   }
 }

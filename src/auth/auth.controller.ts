@@ -1,8 +1,9 @@
-import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuthUserRequestDto } from './dto/auth-user-request.dto';
 import { CreateUserRequestDto } from './dto/create-user-request.dto';
 import { AuthService } from 'src/auth/auth.service';
+import { EndRestoreDto } from './dto/end-restore.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -72,5 +73,15 @@ export class AuthController {
   async confirmEmail(@Body('token') token: string) {
     let data = await this.authService.confirmEmail(token);
     return data;
+  }
+
+  @Get('/restore')
+  async startRestorePassword(@Query('email') email: string){
+    return this.authService.startRestorePassword(email);
+  }
+
+  @Post('/restore')
+  async endRestorePassword(@Body() endRestoreDto: EndRestoreDto) {
+    return this.authService.endRestorePassword(endRestoreDto);
   }
 }

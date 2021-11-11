@@ -11,6 +11,8 @@ import { PexService } from './pex/pex.service';
 import { PexModule } from './pex/pex.module';
 import { AdminService } from './admin/admin.service';
 import { AdminModule } from './admin/admin.module';
+import { ServersService } from './servers/servers.service';
+import { ServersModule } from './servers/servers.module';
 
 @Module({
   imports: [
@@ -39,8 +41,9 @@ import { AdminModule } from './admin/admin.module';
     GoogleModule,
     PexModule,
     AdminModule,
+    ServersModule,
   ],
   controllers: [],
-  providers: [AdminService],
+  providers: [AdminService, ServersService],
 })
 export class AppModule {}
