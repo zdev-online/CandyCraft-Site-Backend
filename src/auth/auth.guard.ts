@@ -17,7 +17,7 @@ export class AuthGuard implements CanActivate {
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     return new Promise(async (resolve, reject): Promise<boolean> => {
       try {
-        const request: Request = ctx.switchToHttp().getRequest();
+        const request = ctx.switchToHttp().getRequest();
         const [type, token] = request.headers.authorization.split(' ');
         if (!type || !token) {
           throw new UnauthorizedException({ message: 'Вы не авторизованы' });
@@ -42,7 +42,7 @@ export class AuthGuard implements CanActivate {
         if (isForAdmin && data.role !== 'admin') {
           throw new UnauthorizedException({ message: 'Доступ запрещен' });
         }
-
+        request.user = data;
         return true;
       } catch (e) {
         if (e instanceof JsonWebTokenError || e instanceof TokenExpiredError) {
