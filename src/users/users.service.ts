@@ -24,7 +24,9 @@ export class UsersService {
     return { message: 'Пароль успешно сменен' }
   }
   
-  async changeSkin(user: UserFromRequest, file: Express.Multer.File){}
+  async changeSkin(user: UserFromRequest, file: Express.Multer.File){
+    
+  }
 
   async create(user: CreateUserDto): Promise<Users> {
     let new_user = await this.usersEntity.create({
@@ -77,6 +79,7 @@ export class UsersService {
     });
     return deleted;
   }
+
 
   isValidPassword(candidate: string, password: string): boolean {
     return bcrypt.compareSync(candidate, password);

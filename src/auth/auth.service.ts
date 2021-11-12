@@ -60,6 +60,11 @@ export class AuthService {
         message: 'Пароли не совпадают',
       });
     }
+    if(!/^[a-zA-Z0-9_]+$/.test(dto.username)){
+      throw new BadRequestException({ 
+        message: "Некорректный никенейм. Можно использовать только латинские буквы, цифры и символ подчеркивания."
+      });
+    }
     // const isCorrectCaptcha = await this.googleService.verifyCaptcha(dto.captcha_token);
     // if (!isCorrectCaptcha) {
     //   throw new BadRequestException({

@@ -13,6 +13,8 @@ import { AdminService } from './admin/admin.service';
 import { AdminModule } from './admin/admin.module';
 import { ServersService } from './servers/servers.service';
 import { ServersModule } from './servers/servers.module';
+import { ShopService } from './shop/shop.service';
+import { ShopModule } from './shop/shop.module';
 
 @Module({
   imports: [
@@ -42,8 +44,9 @@ import { ServersModule } from './servers/servers.module';
     PexModule,
     AdminModule,
     ServersModule,
+    ShopModule,
   ],
   controllers: [],
-  providers: [AdminService, ServersService],
+  providers: [AdminService, ServersService, ShopService, ],
 })
 export class AppModule {}
