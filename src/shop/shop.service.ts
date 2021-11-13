@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { UserFromRequest } from 'src/users/dto/user-from-req.dto';
+import { InjectModel } from '@nestjs/sequelize';
 
 @Injectable()
 export class ShopService {
+    constructor(
+    ){}
+
 }
