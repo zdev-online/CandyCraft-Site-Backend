@@ -1,23 +1,25 @@
 import { Module } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { TokensModule } from './tokens/tokens.module';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { MailModule } from './mail/mail.module';
-import { GoogleService } from './google/google.service';
 import { GoogleModule } from './google/google.module';
-import { PexService } from './pex/pex.service';
 import { PexModule } from './pex/pex.module';
 import { AdminService } from './admin/admin.service';
 import { AdminModule } from './admin/admin.module';
-import { ServersService } from './servers/servers.service';
 import { ServersModule } from './servers/servers.module';
-import { ShopService } from './shop/shop.service';
 import { ShopModule } from './shop/shop.module';
+import { SkinsModule } from './skins/skins.module';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+    }),
     ConfigModule.forRoot({
       envFilePath: `.${process.env.MODE}.env`,
       isGlobal: true,
@@ -45,8 +47,9 @@ import { ShopModule } from './shop/shop.module';
     AdminModule,
     ServersModule,
     ShopModule,
+    SkinsModule,
   ],
   controllers: [],
-  providers: [AdminService, ServersService, ShopService, ],
+  providers: [AdminService],
 })
 export class AppModule {}

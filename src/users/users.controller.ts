@@ -9,6 +9,7 @@ import { Request } from 'express';
 import { User } from './user.decorator';
 import { Users } from './users.entity';
 import { UserFromRequest } from './dto/user-from-req.dto';
+import { extname } from 'path';
 
 @UseGuards(AuthGuard)
 @ConfirmedEmail()
@@ -24,15 +25,18 @@ export class UsersController {
 
     @UseInterceptors(FileInterceptor('skin', {
         storage: diskStorage({
-            destination: `uploads`,
+            destination: `uploads/skins`,
             filename: (req: Request, file: Express.Multer.File, callback) => {
+                if(extname(file.filename) != '.png'){
+                    return callback({ message: 'Скин должен иметь расширение .png', name: undefined }, null);
+                }
                 let user = (req as any).user;
                 return callback(null, `${user.uuid}.png`);
             }
         })
     }))
     @Post('/change/skin')
-    changeSkin(@UploadedFile() file: Express.Multer.File, @User() user: UserFromRequest){
-        return this.userService.changeSkin(user, file);
+    async changeSkin(@UploadedFile() file: Express.Multer.File, @User() user: UserFromRequest){
+        return await this.userService.changeSkin(user, file);
     }
 }

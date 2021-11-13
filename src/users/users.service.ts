@@ -6,26 +6,41 @@ import { Users } from './users.entity';
 import * as bcrypt from 'bcrypt';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UserFromRequest } from './dto/user-from-req.dto';
+import { SkinsService } from 'src/skins/skins.service';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(Users) private usersEntity: typeof Users) {}
-  
-  async changePassword(user: UserFromRequest, dto: ChangePasswordDto){
+  constructor(
+    @InjectModel(Users) private usersEntity: typeof Users,
+    private skinService: SkinsService
+  ) { }
+
+  async changePassword(user: UserFromRequest, dto: ChangePasswordDto) {
     let data = await this.usersEntity.findByPk(user.id);
-    if(!this.isValidPassword(dto.old_password, data.password)){
+    if (!this.isValidPassword(dto.old_password, data.password)) {
       throw new BadRequestException({ message: 'Неверный пароль' });
     }
-    if(dto.new_password != dto.new_password_confirm){ 
+    if (dto.new_password != dto.new_password_confirm) {
       throw new BadRequestException({ message: 'Пароли не совпадают' });
     }
     data.password = this.hashPassword(dto.new_password);
     await data.save();
     return { message: 'Пароль успешно сменен' }
   }
-  
-  async changeSkin(user: UserFromRequest, file: Express.Multer.File){
-    
+
+  async changeSkin(user: UserFromRequest, file: Express.Multer.File) {
+    if(!file){ throw new BadRequestException({ message: 'Прикрепите файл скина' }); }
+    let isValidSkin = await this.skinService.isValidSkin({ 
+      file,
+      visibility: 0,
+      name: user.username,
+      variant: ''
+    });
+    if(!isValidSkin){ throw new BadRequestException({ message: 'Неверный файл скина' }); }
+    let data = await this.usersEntity.findByPk(user.id);
+    data.skin = `${file.filename}`;
+    await data.save();
+    return { message: 'Скин загружен', url: `/uploads/skins/${file.filename}` }
   }
 
   async create(user: CreateUserDto): Promise<Users> {

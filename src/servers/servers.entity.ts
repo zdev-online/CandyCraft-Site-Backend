@@ -39,6 +39,6 @@ export class Servers extends Model<IServers, CreateServerDto> {
     @Column({ allowNull: false })
     media: string;
 
-    @Column({ allowNull: false })
+    @Column({ allowNull: false, unique: true })
     position: number;
 }
