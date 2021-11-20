@@ -32,7 +32,7 @@ export class MailService {
     return uuid.v4();
   }
 
-  async sendPasswordRestore(email: string, username: string, token: string){
+  async sendPasswordRestore(email: string, username: string, token: string) {
     const url = `${process.env.SITE_URL}/auth/restore/${token}`;
     await this.mailerService.sendMail({
       to: email,

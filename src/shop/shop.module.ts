@@ -7,11 +7,14 @@ import { Items } from './items.entity';
 import { Kit } from './kit.entity';
 import { Product } from './product.entity';
 import { ShopController } from './shop.controller';
+import { ShopService } from './shop.service';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Case, Product, Donate, Items, Kit, Users])
+    SequelizeModule.forFeature([Case, Product, Donate, Items, Kit, Users]),
   ],
-  controllers: [ShopController]
+  providers: [ShopService],
+  controllers: [ShopController],
+  exports: [ShopService],
 })
 export class ShopModule {}

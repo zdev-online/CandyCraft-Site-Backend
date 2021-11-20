@@ -1,4 +1,11 @@
-import { Body, Controller, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ConfirmedEmail } from 'src/auth/confirmed-email.decorator';
@@ -15,28 +22,38 @@ import { extname } from 'path';
 @ConfirmedEmail()
 @Controller('users')
 export class UsersController {
-    constructor(private userService: UsersService){}
+  constructor(private userService: UsersService) {}
 
-    @Post('/change/password')
-    async changePassword(@Body() changePasswordDto: ChangePasswordDto, @User() user: UserFromRequest){
-        return await this.userService.changePassword(user, changePasswordDto);
-    }
+  @Post('/change/password')
+  async changePassword(
+    @Body() changePasswordDto: ChangePasswordDto,
+    @User() user: UserFromRequest,
+  ) {
+    return await this.userService.changePassword(user, changePasswordDto);
+  }
 
-
-    @UseInterceptors(FileInterceptor('skin', {
-        storage: diskStorage({
-            destination: `uploads/skins`,
-            filename: (req: Request, file: Express.Multer.File, callback) => {
-                if(extname(file.filename) != '.png'){
-                    return callback({ message: 'Скин должен иметь расширение .png', name: undefined }, null);
-                }
-                let user = (req as any).user;
-                return callback(null, `${user.uuid}.png`);
-            }
-        })
-    }))
-    @Post('/change/skin')
-    async changeSkin(@UploadedFile() file: Express.Multer.File, @User() user: UserFromRequest){
-        return await this.userService.changeSkin(user, file);
-    }
+  @UseInterceptors(
+    FileInterceptor('skin', {
+      storage: diskStorage({
+        destination: `uploads/skins`,
+        filename: (req: Request, file: Express.Multer.File, callback) => {
+          if (extname(file.filename) != '.png') {
+            return callback(
+              { message: 'Скин должен иметь расширение .png', name: undefined },
+              null,
+            );
+          }
+          let user = (req as any).user;
+          return callback(null, `${user.uuid}.png`);
+        },
+      }),
+    }),
+  )
+  @Post('/change/skin')
+  async changeSkin(
+    @UploadedFile() file: Express.Multer.File,
+    @User() user: UserFromRequest,
+  ) {
+    return await this.userService.changeSkin(user, file);
+  }
 }

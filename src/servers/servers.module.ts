@@ -5,9 +5,9 @@ import { ServersController } from './servers.controller';
 import { Servers } from './servers.entity';
 
 @Module({
-    imports: [SequelizeModule.forFeature([Servers])],
-    providers: [ServersService],
-    exports: [ServersService],
-    controllers: [ServersController]
+  imports: [SequelizeModule.forFeature([Servers])],
+  providers: [ServersService],
+  exports: [ServersService],
+  controllers: [ServersController],
 })
 export class ServersModule {}

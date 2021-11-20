@@ -5,6 +5,6 @@ import { SkinsService } from './skins.service';
   imports: [],
   providers: [SkinsService],
   controllers: [],
-  exports: [SkinsService]
+  exports: [SkinsService],
 })
 export class SkinsModule {}

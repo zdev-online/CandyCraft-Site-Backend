@@ -11,9 +11,12 @@ import { Restore } from './restore.entity';
 @Module({
   imports: [
     SequelizeModule.forFeature([Restore]),
-    MailModule, UsersModule, TokensModule, GoogleModule
+    MailModule,
+    UsersModule,
+    TokensModule,
+    GoogleModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}

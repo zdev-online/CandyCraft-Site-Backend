@@ -1,4 +1,4 @@
 export class CreateKitDto {
-    name: string;
-    image: string;
+  name: string;
+  image: string;
 }

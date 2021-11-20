@@ -76,7 +76,7 @@ export class AuthController {
   }
 
   @Get('/restore')
-  async startRestorePassword(@Query('email') email: string){
+  async startRestorePassword(@Query('email') email: string) {
     return this.authService.startRestorePassword(email);
   }
 

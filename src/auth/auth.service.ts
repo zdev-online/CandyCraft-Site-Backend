@@ -18,7 +18,7 @@ export class AuthService {
     private tokensService: TokensService,
     private mailService: MailService,
     private googleService: GoogleService,
-    @InjectModel(Restore) private restoreEntity: typeof Restore
+    @InjectModel(Restore) private restoreEntity: typeof Restore,
   ) {
     this.deleteUnconfirmedUsers();
   }
@@ -60,9 +60,10 @@ export class AuthService {
         message: 'Пароли не совпадают',
       });
     }
-    if(!/^[a-zA-Z0-9_]+$/.test(dto.username)){
-      throw new BadRequestException({ 
-        message: "Некорректный никенейм. Можно использовать только латинские буквы, цифры и символ подчеркивания."
+    if (!/^[a-zA-Z0-9_]+$/.test(dto.username)) {
+      throw new BadRequestException({
+        message:
+          'Некорректный никенейм. Можно использовать только латинские буквы, цифры и символ подчеркивания.',
       });
     }
     // const isCorrectCaptcha = await this.googleService.verifyCaptcha(dto.captcha_token);
@@ -177,35 +178,42 @@ export class AuthService {
     };
   }
 
-  async startRestorePassword(email: string){
+  async startRestorePassword(email: string) {
     let user = await this.usersService.findByEmail(email);
-    if(!user){
-      throw new BadRequestException({ message: 'Пользователь с таким E-Mail - не найден' })
+    if (!user) {
+      throw new BadRequestException({
+        message: 'Пользователь с таким E-Mail - не найден',
+      });
     }
-    let restore = await this.restoreEntity.create({ 
+    let restore = await this.restoreEntity.create({
       userId: user.id,
-      token: v4()
+      token: v4(),
     });
-    return { message: 'Письмо с ссылкой на восстановление пароля отправлено на ваш E-Mail' }
+    return {
+      message:
+        'Письмо с ссылкой на восстановление пароля отправлено на ваш E-Mail',
+    };
   }
 
-  async endRestorePassword(dto: EndRestoreDto){
-      let restore = await this.restoreEntity.findOne({ 
-        where: {
-          token: dto.token
-        }
+  async endRestorePassword(dto: EndRestoreDto) {
+    let restore = await this.restoreEntity.findOne({
+      where: {
+        token: dto.token,
+      },
+    });
+    if (!restore) {
+      throw new BadRequestException({
+        message: 'Неверный токен восстановления',
       });
-      if(!restore){
-        throw new BadRequestException({ message: "Неверный токен восстановления" });
-      }
-      if(dto.password != dto.password_confirm){
-        throw new BadRequestException({ message: 'Пароли не совпадают' });
-      }
+    }
+    if (dto.password != dto.password_confirm) {
+      throw new BadRequestException({ message: 'Пароли не совпадают' });
+    }
 
-      let user = await this.usersService.findById(restore.userId);
-      user.password = this.usersService.hashPassword(dto.password);
-      await user.save();
-      return { message: 'Пароль успешно сменен - войдите в свой аккаунт' }
+    let user = await this.usersService.findById(restore.userId);
+    user.password = this.usersService.hashPassword(dto.password);
+    await user.save();
+    return { message: 'Пароль успешно сменен - войдите в свой аккаунт' };
   }
 
   private async deleteUnconfirmedUsers() {
