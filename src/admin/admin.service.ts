@@ -5,6 +5,8 @@ import { CreateCaseDto } from 'src/admin/dto/create-case.dto';
 import { ShopService } from 'src/shop/shop.service';
 import { CreateServerDto } from './dto/create-server.dto';
 import { CreateItemsCaseDto } from './dto/create-items-case.dto';
+import { CreateDonateDto } from './dto/create-donate.dto';
+import { CreateKitsDto } from './dto/create-kits.dto';
 
 @Injectable()
 export class AdminService {
@@ -38,14 +40,23 @@ export class AdminService {
   }
 
   async createDonateProduct(
-    donateDto,
-    kits,
+    donateDto: CreateDonateDto,
+    kits: CreateKitsDto[],
     donate_image: Express.Multer.File,
     kits_images: Express.Multer.File[]
   ) {
-    await this.shopService.createDonateProduct({});
-    await this.shopService.createKitsForDonate();
-    return {}
+    if (kits_images.length != kits.length) {
+      throw new BadRequestException({
+        message:
+          'Количество китов и количество их изображений - должны равны',
+      });
+    }
+    let donate = await this.shopService.createDonateProduct({
+      ...donateDto,
+      image: donate_image.filename
+    });
+    let donate_kits = await this.shopService.createKitsForDonate(kits.map((x, i) => ({ ...x, image: kits_images[i].filename })))
+    return { donate, kits: donate_kits }
   }
   async createCaseProduct(
     caseDto: CreateCaseDto,
@@ -69,7 +80,7 @@ export class AdminService {
       image: case_image[i],
     }));
     let case_items = await this.shopService.createItemsForCase(items);
-    return { new_case, case_items };
+    return { case: new_case, items: case_items };
   }
   async deleteProductById(id: number) {
     return await this.shopService.deleteProductById(id);

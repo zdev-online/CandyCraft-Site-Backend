@@ -108,23 +108,30 @@ export class ShopService {
     }
   }
 
-  async createDonateProduct(dto: CreateDonateDto) {
+  async createDonateProduct(dto: CreateDonateDto): Promise<Donate> {
     return await this.donateEntity.create(dto);
   }
 
-  async createCaseProduct(dto: CreateCaseDto) {
+  async createCaseProduct(dto: CreateCaseDto): Promise<Case> {
     return await this.caseEntity.create(dto);
   }
 
-  async createItemsForCase(dto: CreateItemsDto[]) {
+  async createItemsForCase(dto: CreateItemsDto[]): Promise<Items[]> {
+    let items: Items[] = [];
     for (let i = 0; i < dto.length; i++) {
-      await this.itemsEntity.create(dto[i]);
+      let item = await this.itemsEntity.create(dto[i]);
+      items.push(item);
     }
-    return dto;
+    return items;
   }
 
-  async createKitsForDonate(dto: CreateKitDto) {
-    return await this.kitEntity.create(dto);
+  async createKitsForDonate(dtos: CreateKitDto[]): Promise<Kit[]> {
+    let kits: Kit[] = [];
+    for(let i = 0; i < dtos.length; i++){
+      let kit = await this.kitEntity.create(dtos[i]);
+      kits.push(kit);
+    }
+    return kits;
   }
 
   async deleteProductById(id: number) {
