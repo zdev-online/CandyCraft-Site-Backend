@@ -51,6 +51,18 @@ export class AdminService {
           'Количество китов и количество их изображений - должны равны',
       });
     }
+    donateDto.servers_id.split(',').map(async x => {
+      let srvId = Number(x);
+      let srv = await this.serversService.findById(srvId);
+      if(!srv){
+        throw new BadRequestException({ message: `Сервер с ID: ${srvId} - не найден` });
+      }
+      let isGroupExists = this.pexService.isGroupExists(srv.pex_prefix, donateDto.pex_name);
+      if(!isGroupExists){
+        throw new BadRequestException({ message: `У сервера ${srv.server_name} нет PEX - группы '${donateDto.pex_name}'` });
+      }
+    }); 
+
     let donate = await this.shopService.createDonateProduct({
       ...donateDto,
       image: donate_image.filename
@@ -84,5 +96,8 @@ export class AdminService {
   }
   async deleteProductById(id: number) {
     return await this.shopService.deleteProductById(id);
+  }
+  async getAllProducts(){
+    return await this.shopService.getFullProducts();
   }
 }

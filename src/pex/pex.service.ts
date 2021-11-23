@@ -148,6 +148,8 @@ export class PexService {
     const group: IPermissions[] = (await this.connection.query({
       query: `SELECT * FROM ${prefix}_pex_permissions WHERE name = ?`,
       values: [groupName],
+    }, {
+      type: QueryTypes.SELECT
     })) as any;
     const result = [];
     for (let i = 0; i < group.length; i++) {
@@ -155,6 +157,16 @@ export class PexService {
       result.push(permission);
     }
     return result;
+  }
+
+  async isGroupExists(prefix: string, groupName: string): Promise<boolean> {
+    const group: IPermissions[] = (await this.connection.query({
+      query: `SELECT * FROM ${prefix}_pex_permissions WHERE name = ?`,
+      values: [groupName],
+    }, { 
+      type: QueryTypes.SELECT
+    })) as any;
+    return !!group.length;
   }
 
   // Найти игроков, которые в определенной группе

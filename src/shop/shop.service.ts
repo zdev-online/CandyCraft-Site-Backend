@@ -148,4 +148,48 @@ export class ShopService {
     await product.destroy();
     return product;
   }
+
+  async getFullProducts(){
+    let products = await this.productEntity.findAll();
+    
+    let donates = await this.donateEntity.findAll();
+    let kits = await this.kitEntity.findAll();
+    
+    let cases = await this.caseEntity.findAll();
+    let items = await this.itemsEntity.findAll();
+    
+    let data = {
+      donate: [],
+      cases: []
+    };
+
+    products.forEach((x) => {
+      if(x.type == 'donate'){
+        let donate_ = donates.find(y => y.id == x.product_id);
+        let id = data.donate.push(donate_) - 1;
+        kits.forEach(kit => {
+          if(kit.donate_id == donate_.id){
+            if(!data.donate[id].kits){
+              data.donate[id].kits = [];
+            }
+            data.donate[id].kits.push(kit);
+          }
+        });
+      }
+      if(x.type == 'case'){
+        let case_ = cases.find(y => y.id == x.product_id);
+        let id = data.cases.push(case_) - 1;
+        items.forEach(item => {
+          if(item.case_id == case_.id){
+            if(!data.cases[id].items){
+              data.cases[id].items = [];
+            }
+            data.cases[id].items.push(item);
+          }
+        });
+      }
+    });
+
+    return data;
+  }
 }
