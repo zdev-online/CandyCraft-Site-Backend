@@ -1,3 +1,3 @@
 export class CreateKitsDto {
-    name: string;
+  name: string;
 }

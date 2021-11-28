@@ -25,7 +25,10 @@ export class AuthService {
 
   async signin(dto: AuthUserRequestDto) {
     const user = await this.usersService.findByEmail(dto.email);
-    if (!user || !this.usersService.isValidPassword(dto.password, user.password)) {
+    if (
+      !user ||
+      !this.usersService.isValidPassword(dto.password, user.password)
+    ) {
       throw new BadRequestException({ message: 'Неверный E-Mail или пароль' });
     }
     const [access_token, refresh_token] =
@@ -123,13 +126,15 @@ export class AuthService {
 
   async refresh(value: string) {
     if (!value) {
-      throw new BadRequestException({ message: 'Неверный refresh-токен' })
+      throw new BadRequestException({ message: 'Неверный refresh-токен' });
     }
     const isValid = await this.tokensService.validateRefresh(value);
     if (!isValid) {
       throw new BadRequestException({ message: 'Вы не авторизованы' });
     }
-    const token = await this.tokensService.findRefreshTokenByUserId(isValid.userId);
+    const token = await this.tokensService.findRefreshTokenByUserId(
+      isValid.userId,
+    );
     if (!token) {
       throw new BadRequestException({ messaae: 'Refresh токен - просрочен' });
     }

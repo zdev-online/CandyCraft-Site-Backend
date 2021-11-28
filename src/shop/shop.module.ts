@@ -13,7 +13,7 @@ import { ShopService } from './shop.service';
 @Module({
   imports: [
     SequelizeModule.forFeature([Case, Product, Donate, Items, Kit, Users]),
-    PexModule
+    PexModule,
   ],
   providers: [ShopService],
   controllers: [ShopController],

@@ -14,13 +14,16 @@ export class AdminService {
     private serversService: ServersService,
     private pexService: PexService,
     private shopService: ShopService,
-  ) { }
+  ) {}
 
-  async createServer(dto: CreateServerDto, files: { server_gif: Express.Multer.File, media: Express.Multer.File[] }) {
+  async createServer(
+    dto: CreateServerDto,
+    files: { server_gif: Express.Multer.File; media: Express.Multer.File[] },
+  ) {
     return await this.serversService.create({
       ...dto,
-      media: files.media.map(x => x.filename).join(","),
-      server_gif_path: files.server_gif.filename
+      media: files.media.map((x) => x.filename).join(','),
+      server_gif_path: files.server_gif.filename,
     });
   }
   async deleteServer(serverId: number) {
@@ -40,32 +43,40 @@ export class AdminService {
     donateDto: CreateDonateDto,
     kits: CreateKitsDto[],
     donate_image: Express.Multer.File,
-    kits_images: Express.Multer.File[]
+    kits_images: Express.Multer.File[],
   ) {
     if (kits_images.length != kits.length) {
       throw new BadRequestException({
-        message:
-          'Количество китов и количество их изображений - должны равны',
+        message: 'Количество китов и количество их изображений - должны равны',
       });
     }
-    donateDto.servers_id.split(',').map(async x => {
+    donateDto.servers_id.split(',').map(async (x) => {
       let srvId = Number(x);
       let srv = await this.serversService.findById(srvId);
-      if(!srv){
-        throw new BadRequestException({ message: `Сервер с ID: ${srvId} - не найден` });
+      if (!srv) {
+        throw new BadRequestException({
+          message: `Сервер с ID: ${srvId} - не найден`,
+        });
       }
-      let isGroupExists = this.pexService.isGroupExists(srv.pex_prefix, donateDto.pex_name);
-      if(!isGroupExists){
-        throw new BadRequestException({ message: `У сервера ${srv.server_name} нет PEX - группы '${donateDto.pex_name}'` });
+      let isGroupExists = this.pexService.isGroupExists(
+        srv.pex_prefix,
+        donateDto.pex_name,
+      );
+      if (!isGroupExists) {
+        throw new BadRequestException({
+          message: `У сервера ${srv.server_name} нет PEX - группы '${donateDto.pex_name}'`,
+        });
       }
-    }); 
+    });
 
     let donate = await this.shopService.createDonateProduct({
       ...donateDto,
-      image: donate_image.filename
+      image: donate_image.filename,
     });
-    let donate_kits = await this.shopService.createKitsForDonate(kits.map((x, i) => ({ ...x, image: kits_images[i].filename })))
-    return { donate, kits: donate_kits }
+    let donate_kits = await this.shopService.createKitsForDonate(
+      kits.map((x, i) => ({ ...x, image: kits_images[i].filename })),
+    );
+    return { donate, kits: donate_kits };
   }
   async createCaseProduct(
     caseDto: CreateCaseDto,
@@ -94,7 +105,7 @@ export class AdminService {
   async deleteProductById(id: number) {
     return await this.shopService.deleteProductById(id);
   }
-  async getAllProducts(){
+  async getAllProducts() {
     return await this.shopService.getFullProducts();
   }
 }

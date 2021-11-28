@@ -19,6 +19,8 @@ export class CreateCaseDto {
   @IsString({ message: 'Укажите шаблон игрока. (Пример: %player_name%)' })
   player_template: string;
 
-  @IsString({ message: 'Укажите шаблон количества сундуков. (Пример: %count%)' })
+  @IsString({
+    message: 'Укажите шаблон количества сундуков. (Пример: %count%)',
+  })
   count_template: string;
 }

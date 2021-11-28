@@ -29,7 +29,7 @@ export class ShopService {
     @InjectModel(Items) private itemsEntity: typeof Items,
     @InjectModel(Kit) private kitEntity: typeof Kit,
     @InjectModel(Users) private usersEntity: typeof Users,
-    private pexService: PexService
+    private pexService: PexService,
   ) {}
 
   async findAll() {
@@ -99,7 +99,6 @@ export class ShopService {
       if (product.type == 'donate') {
       }
       if (product.type == 'case') {
-
       }
       await transaction.commit();
       return { message: 'Товар успешно преобретен', id };
@@ -130,7 +129,7 @@ export class ShopService {
 
   async createKitsForDonate(dtos: CreateKitDto[]): Promise<Kit[]> {
     let kits: Kit[] = [];
-    for(let i = 0; i < dtos.length; i++){
+    for (let i = 0; i < dtos.length; i++) {
       let kit = await this.kitEntity.create(dtos[i]);
       kits.push(kit);
     }
@@ -152,39 +151,39 @@ export class ShopService {
     return product;
   }
 
-  async getFullProducts(){
+  async getFullProducts() {
     let products = await this.productEntity.findAll();
-    
+
     let donates = await this.donateEntity.findAll();
     let kits = await this.kitEntity.findAll();
-    
+
     let cases = await this.caseEntity.findAll();
     let items = await this.itemsEntity.findAll();
-    
+
     let data = {
       donate: [],
-      cases: []
+      cases: [],
     };
 
     products.forEach((x) => {
-      if(x.type == 'donate'){
-        let donate_ = donates.find(y => y.id == x.product_id);
+      if (x.type == 'donate') {
+        let donate_ = donates.find((y) => y.id == x.product_id);
         let id = data.donate.push(donate_) - 1;
-        kits.forEach(kit => {
-          if(kit.donate_id == donate_.id){
-            if(!data.donate[id].kits){
+        kits.forEach((kit) => {
+          if (kit.donate_id == donate_.id) {
+            if (!data.donate[id].kits) {
               data.donate[id].kits = [];
             }
             data.donate[id].kits.push(kit);
           }
         });
       }
-      if(x.type == 'case'){
-        let case_ = cases.find(y => y.id == x.product_id);
+      if (x.type == 'case') {
+        let case_ = cases.find((y) => y.id == x.product_id);
         let id = data.cases.push(case_) - 1;
-        items.forEach(item => {
-          if(item.case_id == case_.id){
-            if(!data.cases[id].items){
+        items.forEach((item) => {
+          if (item.case_id == case_.id) {
+            if (!data.cases[id].items) {
               data.cases[id].items = [];
             }
             data.cases[id].items.push(item);

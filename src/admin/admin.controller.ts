@@ -29,25 +29,26 @@ import { AuthGuard } from 'src/auth/auth.guard';
 @UseGuards(AuthGuard)
 @Controller('admin')
 export class AdminController {
-  constructor(private adminService: AdminService) { }
+  constructor(private adminService: AdminService) {}
 
   @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'server_gif', maxCount: 1 },
-      { name: 'media' }
-    ], {
-      storage: diskStorage({
-        destination: `uploads/shop`,
-        filename: (req: e.Request, file, callback) => {
-          return callback(null, `${v4()}${extname(file.originalname)}`);
-        },
-      })
-    })
+    FileFieldsInterceptor(
+      [{ name: 'server_gif', maxCount: 1 }, { name: 'media' }],
+      {
+        storage: diskStorage({
+          destination: `uploads/shop`,
+          filename: (req: e.Request, file, callback) => {
+            return callback(null, `${v4()}${extname(file.originalname)}`);
+          },
+        }),
+      },
+    ),
   )
   @Post('/servers/create')
   async createServer(
     dto: CreateServerDto,
-    @UploadedFiles() files: { server_gif: Express.Multer.File, media: Express.Multer.File[] }
+    @UploadedFiles()
+    files: { server_gif: Express.Multer.File; media: Express.Multer.File[] },
   ) {
     return await this.adminService.createServer(dto, files);
   }
@@ -74,52 +75,68 @@ export class AdminController {
 
   @Post('/shop/case/create')
   @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'case_image', maxCount: 1 },
-      { name: 'items_images' }
-    ], {
-      storage: diskStorage({
-        destination: `uploads/shop`,
-        filename: (req: e.Request, file, callback) => {
-          return callback(null, `${v4()}${extname(file.originalname)}`);
-        },
-      })
-    })
+    FileFieldsInterceptor(
+      [{ name: 'case_image', maxCount: 1 }, { name: 'items_images' }],
+      {
+        storage: diskStorage({
+          destination: `uploads/shop`,
+          filename: (req: e.Request, file, callback) => {
+            return callback(null, `${v4()}${extname(file.originalname)}`);
+          },
+        }),
+      },
+    ),
   )
   async createCaseProduct(
     @Body('case') caseDto: CreateCaseDto,
     @Body('items') itemsDto: CreateItemsCaseDto[],
-    @UploadedFiles() files: { case_image: Express.Multer.File, items_images: Express.Multer.File[] }
+    @UploadedFiles()
+    files: {
+      case_image: Express.Multer.File;
+      items_images: Express.Multer.File[];
+    },
   ) {
-    return await this.adminService.createCaseProduct(caseDto, itemsDto, files.case_image, files.items_images);
+    return await this.adminService.createCaseProduct(
+      caseDto,
+      itemsDto,
+      files.case_image,
+      files.items_images,
+    );
   }
 
-  
   @Post('/shop/donate/create')
   @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'donate_image', maxCount: 1 },
-      { name: 'kits_images' }
-    ], {
-      storage: diskStorage({
-        destination: `uploads/shop`,
-        filename: (req: e.Request, file, callback) => {
-          return callback(null, `${v4()}${extname(file.originalname)}`);
-        },
-      })
-    })
+    FileFieldsInterceptor(
+      [{ name: 'donate_image', maxCount: 1 }, { name: 'kits_images' }],
+      {
+        storage: diskStorage({
+          destination: `uploads/shop`,
+          filename: (req: e.Request, file, callback) => {
+            return callback(null, `${v4()}${extname(file.originalname)}`);
+          },
+        }),
+      },
+    ),
   )
   async createDonateProduct(
     @Body('donate') donateDto: CreateDonateDto,
     @Body('kits') kitsDto: CreateKitsDto[],
-    @UploadedFiles() files: { donate_image: Express.Multer.File, kits_images: Express.Multer.File[] }
+    @UploadedFiles()
+    files: {
+      donate_image: Express.Multer.File;
+      kits_images: Express.Multer.File[];
+    },
   ) {
-    return await this.adminService.createDonateProduct(donateDto, kitsDto, files.donate_image, files.kits_images);
+    return await this.adminService.createDonateProduct(
+      donateDto,
+      kitsDto,
+      files.donate_image,
+      files.kits_images,
+    );
   }
 
-
   @Get('/shop')
-  async getAllProducts(){
+  async getAllProducts() {
     return await this.adminService.getAllProducts();
   }
 }

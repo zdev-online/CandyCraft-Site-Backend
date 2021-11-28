@@ -145,12 +145,15 @@ export class PexService {
     prefix: string,
     groupName: string,
   ): Promise<string[]> {
-    const group: IPermissions[] = (await this.connection.query({
-      query: `SELECT * FROM ${prefix}_pex_permissions WHERE name = ?`,
-      values: [groupName],
-    }, {
-      type: QueryTypes.SELECT
-    })) as any;
+    const group: IPermissions[] = (await this.connection.query(
+      {
+        query: `SELECT * FROM ${prefix}_pex_permissions WHERE name = ?`,
+        values: [groupName],
+      },
+      {
+        type: QueryTypes.SELECT,
+      },
+    )) as any;
     const result = [];
     for (let i = 0; i < group.length; i++) {
       let { permission } = group[i];
@@ -160,12 +163,15 @@ export class PexService {
   }
 
   async isGroupExists(prefix: string, groupName: string): Promise<boolean> {
-    const group: IPermissions[] = (await this.connection.query({
-      query: `SELECT * FROM ${prefix}_pex_permissions WHERE name = ?`,
-      values: [groupName],
-    }, { 
-      type: QueryTypes.SELECT
-    })) as any;
+    const group: IPermissions[] = (await this.connection.query(
+      {
+        query: `SELECT * FROM ${prefix}_pex_permissions WHERE name = ?`,
+        values: [groupName],
+      },
+      {
+        type: QueryTypes.SELECT,
+      },
+    )) as any;
     return !!group.length;
   }
 

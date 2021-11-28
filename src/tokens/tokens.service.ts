@@ -110,10 +110,12 @@ export class TokensService {
   }
 
   async saveRefreshToken(userId: number, value: string): Promise<Tokens> {
-    let data = await this.tokensEntity.create({ 
+    let data = await this.tokensEntity.create({
       userId,
       value,
-      expiresIn: new Date(new Date().getTime() + this.JWT_REFRESH_EXPIRES_NUMBER)
+      expiresIn: new Date(
+        new Date().getTime() + this.JWT_REFRESH_EXPIRES_NUMBER,
+      ),
     });
     return data;
   }
