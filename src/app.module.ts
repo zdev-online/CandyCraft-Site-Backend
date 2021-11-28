@@ -34,7 +34,7 @@ import { join } from 'path';
       autoLoadModels: true,
       sync: {
         // force: true,
-        // alter: true
+        alter: true
       },
       synchronize: true,
     }),

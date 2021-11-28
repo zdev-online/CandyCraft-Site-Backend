@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Tokens } from './tokens.entity';
 import { TokensService } from './tokens.service';
 
+@Global()
 @Module({
   imports: [JwtModule.register({}), SequelizeModule.forFeature([Tokens])],
   providers: [TokensService],

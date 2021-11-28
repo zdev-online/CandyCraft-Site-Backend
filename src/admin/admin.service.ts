@@ -22,8 +22,9 @@ export class AdminService {
   ) {
     return await this.serversService.create({
       ...dto,
+      mods: dto.mods.join(','),
       media: files.media.map((x) => x.filename).join(','),
-      server_gif_path: files.server_gif.filename,
+      server_gif_path: files.server_gif[0].filename,
     });
   }
   async deleteServer(serverId: number) {

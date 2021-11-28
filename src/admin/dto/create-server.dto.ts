@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsNumber, IsString, IsArray } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateServerDto {
   @IsNotEmpty({ message: 'Префикс баз данных PEX - не может быть пустым' })
@@ -18,10 +19,12 @@ export class CreateServerDto {
   server_ip: string;
 
   @IsNotEmpty({ message: 'Порт - должен быть числом' })
+  @Transform(({ value }) => Number(value))
   @IsNumber({ allowNaN: false }, { message: 'Порт - должен быть числом' })
   server_port: number;
 
   @IsNotEmpty({ message: 'Порт - должен быть числом' })
+  @Transform(({ value }) => Number(value))
   @IsNumber({ allowNaN: false }, { message: 'RCON-Порт - должен быть числом' })
   rcon_port: number;
 
@@ -33,10 +36,12 @@ export class CreateServerDto {
     message:
       'Список модов - должны быть массивом, который объеденен в строку через запятую',
   })
+  @Transform(({ value }) => String(value).split(','))
   @IsArray({ message: 'Список модов - должны быть массивом строк' })
-  mods: string;
+  mods: string[];
 
   @IsNotEmpty({ message: 'Укажите позицию в списке серверов' })
+  @Transform(({ value }) => Number(value))
   @IsNumber({ allowNaN: false }, { message: 'Позиция - должна быть числом' })
   position: number;
 }

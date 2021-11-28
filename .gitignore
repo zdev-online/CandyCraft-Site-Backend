@@ -1,6 +1,9 @@
 .dev.env
 .prod.env
 topcraft_gift.php
+uploads/servers/*
+uploads/shop/*
+uploads/skins/*
 
 # compiled output
 /dist

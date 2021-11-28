@@ -1,4 +1,4 @@
-import { Table, Model, Column } from 'sequelize-typescript';
+import { Table, Model, Column, DataType } from 'sequelize-typescript';
 import { CreateServerDto } from './dto/create-server.dto';
 import { IServers } from './servers.interface';
 
@@ -16,6 +16,7 @@ export class Servers extends Model<IServers, CreateServerDto> {
   @Column({ allowNull: false })
   server_desc: string;
 
+  @Column({ allowNull: false })
   server_ip: string;
 
   @Column({ allowNull: false })
@@ -24,7 +25,7 @@ export class Servers extends Model<IServers, CreateServerDto> {
   @Column({ allowNull: false })
   rcon_port: number;
 
-  @Column({ allowNull: false })
+  @Column({ allowNull: false, type: DataType.TEXT })
   server_gif_path: string;
 
   @Column({ allowNull: false, defaultValue: true })
@@ -36,7 +37,7 @@ export class Servers extends Model<IServers, CreateServerDto> {
   @Column({ allowNull: false })
   mods: string;
 
-  @Column({ allowNull: false })
+  @Column({ allowNull: false, type: DataType.TEXT })
   media: string;
 
   @Column({ allowNull: false, unique: true })

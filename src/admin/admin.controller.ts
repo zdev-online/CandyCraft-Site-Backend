@@ -36,7 +36,7 @@ export class AdminController {
       [{ name: 'server_gif', maxCount: 1 }, { name: 'media' }],
       {
         storage: diskStorage({
-          destination: `uploads/shop`,
+          destination: `uploads/servers`,
           filename: (req: e.Request, file, callback) => {
             return callback(null, `${v4()}${extname(file.originalname)}`);
           },
@@ -46,7 +46,7 @@ export class AdminController {
   )
   @Post('/servers/create')
   async createServer(
-    dto: CreateServerDto,
+    @Body() dto: CreateServerDto,
     @UploadedFiles()
     files: { server_gif: Express.Multer.File; media: Express.Multer.File[] },
   ) {
@@ -54,13 +54,13 @@ export class AdminController {
   }
 
   @Post('/servers/delete')
-  async deleteServer(@Body('id') serverId: string) {
-    return await this.adminService.deleteServer(Number(serverId));
+  async deleteServer(@Body('id') serverId: number) {
+    return await this.adminService.deleteServer(serverId);
   }
 
   @Post('/servers/state')
-  async stateServer(@Body('id') id: string) {
-    return await this.adminService.stateServer(Number(id));
+  async stateServer(@Body('id') id: number) {
+    return await this.adminService.stateServer(id);
   }
 
   @Get('/servers/:id')

@@ -1,6 +1,9 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
+  Inject,
+  Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { TokensService } from 'src/tokens/tokens.service';
@@ -8,7 +11,7 @@ import { Reflector } from '@nestjs/core';
 
 export class AuthGuard implements CanActivate {
   constructor(
-    private tokenService: TokensService,
+    @Inject(TokensService) private tokenService: TokensService,
     private reflector: Reflector,
   ) {}
 
@@ -36,13 +39,13 @@ export class AuthGuard implements CanActivate {
       ctx.getHandler(),
     );
     if (isForConfirmed && !data.confirmed) {
-      throw new UnauthorizedException({
+      throw new ForbiddenException({
         message: 'Только для пользователей с подтвержденным E-Mail',
       });
     }
 
     if (isForAdmin && data.role !== 'admin') {
-      throw new UnauthorizedException({ message: 'Доступ запрещен' });
+      throw new ForbiddenException({ message: 'Доступ запрещен' });
     }
     request.user = data;
     return true;
