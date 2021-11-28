@@ -33,7 +33,7 @@ export class TokensService {
   async validateRefresh(token: string): Promise<TokensPayloadDto> {
     try {
       let data = await this.jwtService.verifyAsync(token, {
-        secret: this.JWT_ACCESS_SECRET,
+        secret: this.JWT_REFRESH_SECRET,
       });
       return data;
     } catch {
@@ -43,7 +43,7 @@ export class TokensService {
   async validateAccess(token: string): Promise<TokensPayloadDto> {
     try {
       let data = await this.jwtService.verifyAsync(token, {
-        secret: this.JWT_REFRESH_SECRET,
+        secret: this.JWT_ACCESS_SECRET,
       });
       return data;
     } catch {
@@ -109,8 +109,12 @@ export class TokensService {
     return token;
   }
 
-  async saveRefreshToken(createRefreshDto: CreateRefreshDto): Promise<Tokens> {
-    let data = await this.tokensEntity.create(createRefreshDto);
+  async saveRefreshToken(userId: number, value: string): Promise<Tokens> {
+    let data = await this.tokensEntity.create({ 
+      userId,
+      value,
+      expiresIn: new Date(new Date().getTime() + this.JWT_REFRESH_EXPIRES_NUMBER)
+    });
     return data;
   }
 

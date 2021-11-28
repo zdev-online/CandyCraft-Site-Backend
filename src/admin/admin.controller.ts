@@ -32,19 +32,22 @@ export class AdminController {
   constructor(private adminService: AdminService) { }
 
   @UseInterceptors(
-    FilesInterceptor('files', undefined, {
+    FileFieldsInterceptor([
+      { name: 'server_gif', maxCount: 1 },
+      { name: 'media' }
+    ], {
       storage: diskStorage({
-        destination: 'uploads/servers',
-        filename: (req, file, callback) => {
-          return callback(null, `${v4()}.${extname(file.originalname)}`);
+        destination: `uploads/shop`,
+        filename: (req: e.Request, file, callback) => {
+          return callback(null, `${v4()}${extname(file.originalname)}`);
         },
-      }),
-    }),
+      })
+    })
   )
   @Post('/servers/create')
   async createServer(
     dto: CreateServerDto,
-    @UploadedFiles() files: Express.Multer.File[],
+    @UploadedFiles() files: { server_gif: Express.Multer.File, media: Express.Multer.File[] }
   ) {
     return await this.adminService.createServer(dto, files);
   }

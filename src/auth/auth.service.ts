@@ -25,10 +25,7 @@ export class AuthService {
 
   async signin(dto: AuthUserRequestDto) {
     const user = await this.usersService.findByEmail(dto.email);
-    if (
-      !user ||
-      this.usersService.isValidPassword(dto.password, user.password)
-    ) {
+    if (!user || !this.usersService.isValidPassword(dto.password, user.password)) {
       throw new BadRequestException({ message: 'Неверный E-Mail или пароль' });
     }
     const [access_token, refresh_token] =
@@ -41,6 +38,7 @@ export class AuthService {
         id: user.id,
       });
 
+    await this.tokensService.saveRefreshToken(user.id, refresh_token);
     return {
       access_token,
       refresh_token,
@@ -66,12 +64,12 @@ export class AuthService {
           'Некорректный никенейм. Можно использовать только латинские буквы, цифры и символ подчеркивания.',
       });
     }
-    const isCorrectCaptcha = await this.googleService.verifyCaptcha(dto.captcha_token);
-    if (!isCorrectCaptcha) {
-      throw new BadRequestException({
-        message: 'Неверная капча'
-      });
-    }
+    // const isCorrectCaptcha = await this.googleService.verifyCaptcha(dto.captcha_token);
+    // if (!isCorrectCaptcha) {
+    //   throw new BadRequestException({
+    //     message: 'Неверная капча'
+    //   });
+    // }
     const candidate = await this.usersService.findByEmailAndUsername(
       dto.email,
       dto.username,
@@ -102,6 +100,8 @@ export class AuthService {
         username: user.username,
         id: user.id,
       });
+
+    await this.tokensService.saveRefreshToken(user.id, refresh_token);
     return {
       message:
         'Перейдите по ссылке в письме, которую мы отправили на ваш почтовый ящик',
@@ -122,13 +122,18 @@ export class AuthService {
   }
 
   async refresh(value: string) {
+    if (!value) {
+      throw new BadRequestException({ message: 'Неверный refresh-токен' })
+    }
     const isValid = await this.tokensService.validateRefresh(value);
     if (!isValid) {
       throw new BadRequestException({ message: 'Вы не авторизованы' });
     }
-    const token = await this.tokensService.findRefreshTokenByUserId(
-      isValid.userId,
-    );
+    const token = await this.tokensService.findRefreshTokenByUserId(isValid.userId);
+    if (!token) {
+      throw new BadRequestException({ messaae: 'Refresh токен - просрочен' });
+    }
+
     const user = await this.usersService.findById(isValid.userId);
     if (!user) {
       throw new BadRequestException({ message: 'Вы не авторизованы' });
@@ -142,8 +147,11 @@ export class AuthService {
         username: user.username,
         id: user.id,
       });
+
     token.value = refresh_token;
+
     await token.save();
+
     return {
       access_token,
       refresh_token,

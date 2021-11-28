@@ -33,8 +33,8 @@ import { join } from 'path';
       database: process.env.MYSQL_DATABASE,
       autoLoadModels: true,
       sync: {
-        force: true,
-        alter: true,
+        // force: true,
+        // alter: true
       },
       synchronize: true,
     }),

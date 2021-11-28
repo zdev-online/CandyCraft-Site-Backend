@@ -16,14 +16,11 @@ export class AdminService {
     private shopService: ShopService,
   ) { }
 
-  async createServer(dto: CreateServerDto, files: Express.Multer.File[]) {
-    return this.serversService.create({
+  async createServer(dto: CreateServerDto, files: { server_gif: Express.Multer.File, media: Express.Multer.File[] }) {
+    return await this.serversService.create({
       ...dto,
-      media: files
-        .slice(1, files.length - 1)
-        .map((x) => x.destination)
-        .join(','),
-      server_gif_path: files[0].destination,
+      media: files.media.map(x => x.filename).join(","),
+      server_gif_path: files.server_gif.filename
     });
   }
   async deleteServer(serverId: number) {
