@@ -9,4 +9,16 @@ export class CreateCaseDto {
 
   @IsNumber({}, { message: 'Укажите позицию кейса' })
   position: number;
+
+  @IsString({ message: 'Укажите команду для выдачи кейса' })
+  command: string;
+
+  @IsString({ message: 'Укажите шаблон сундука. (Пример: %chest%)' })
+  chest_template: string;
+
+  @IsString({ message: 'Укажите шаблон игрока. (Пример: %player_name%)' })
+  player_template: string;
+
+  @IsString({ message: 'Укажите шаблон количества сундуков. (Пример: %count%)' })
+  count_template: string;
 }

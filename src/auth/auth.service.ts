@@ -66,12 +66,12 @@ export class AuthService {
           'Некорректный никенейм. Можно использовать только латинские буквы, цифры и символ подчеркивания.',
       });
     }
-    // const isCorrectCaptcha = await this.googleService.verifyCaptcha(dto.captcha_token);
-    // if (!isCorrectCaptcha) {
-    //   throw new BadRequestException({
-    //     message: 'Неверная капча'
-    //   });
-    // }
+    const isCorrectCaptcha = await this.googleService.verifyCaptcha(dto.captcha_token);
+    if (!isCorrectCaptcha) {
+      throw new BadRequestException({
+        message: 'Неверная капча'
+      });
+    }
     const candidate = await this.usersService.findByEmailAndUsername(
       dto.email,
       dto.username,

@@ -5,6 +5,7 @@ import {
   Param,
   Post,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -21,7 +22,11 @@ import { CreateItemsCaseDto } from './dto/create-items-case.dto';
 import { CreateServerDto } from './dto/create-server.dto';
 import { CreateDonateDto } from './dto/create-donate.dto';
 import { CreateKitsDto } from './dto/create-kits.dto';
+import { Admin } from 'src/auth/admin.decorator';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@Admin()
+@UseGuards(AuthGuard)
 @Controller('admin')
 export class AdminController {
   constructor(private adminService: AdminService) { }

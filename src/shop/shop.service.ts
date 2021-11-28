@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize';
+import { PexService } from 'src/pex/pex.service';
 import { UserFromRequest } from 'src/users/dto/user-from-req.dto';
 import { User } from 'src/users/user.decorator';
 import { Users } from 'src/users/users.entity';
@@ -28,6 +29,7 @@ export class ShopService {
     @InjectModel(Items) private itemsEntity: typeof Items,
     @InjectModel(Kit) private kitEntity: typeof Kit,
     @InjectModel(Users) private usersEntity: typeof Users,
+    private pexService: PexService
   ) {}
 
   async findAll() {
@@ -97,6 +99,7 @@ export class ShopService {
       if (product.type == 'donate') {
       }
       if (product.type == 'case') {
+
       }
       await transaction.commit();
       return { message: 'Товар успешно преобретен', id };
