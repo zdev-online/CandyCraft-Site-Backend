@@ -14,6 +14,8 @@ import { ServersModule } from './servers/servers.module';
 import { ShopModule } from './shop/shop.module';
 import { SkinsModule } from './skins/skins.module';
 import { join } from 'path';
+import { PaymentService } from './payment/payment.service';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -48,8 +50,9 @@ import { join } from 'path';
     ServersModule,
     ShopModule,
     SkinsModule,
+    PaymentModule,
   ],
   controllers: [],
-  providers: [AdminService],
+  providers: [AdminService, PaymentService],
 })
 export class AppModule {}

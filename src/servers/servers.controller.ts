@@ -7,8 +7,8 @@ export class ServersController {
   constructor(private serversService: ServersService) {}
 
   @Get('/:id')
-  async findById(@Param('id') id: string) {
-    let data = await this.serversService.findById(Number(id));
+  async findById(@Param('id') id: number) {
+    let data = await this.serversService.findById(id);
     return { ...new ServerSerializer(data) };
   }
 
