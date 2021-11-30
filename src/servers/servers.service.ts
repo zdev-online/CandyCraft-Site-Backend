@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/sequelize';
 import { CreateServerDto } from './dto/create-server.dto';
 import { Servers } from './servers.entity';
 import gamedig from 'gamedig';
+import { ServerInfoDto } from './dto/server-info.dto';
+import { IServers } from './servers.interface';
 
 @Injectable()
 export class ServersService {
@@ -26,6 +28,16 @@ export class ServersService {
     return await this.serversEntity.create(dto);
   }
 
+  async update(dto: IServers): Promise<Servers> {
+    let server = await this.serversEntity.findByPk(dto.id);
+    if(!server){
+      throw new BadRequestException({ 
+        message: 'Сервер с таким ID - не найден'
+      });
+    }
+    return await server.update(dto);
+  }
+
   async state(id: number): Promise<Servers> {
     let server = await this.findById(id);
     server.active = !server.active;
@@ -39,7 +51,7 @@ export class ServersService {
     return server;
   }
 
-  private async getServerInfo(host: string, port: number){
+  private async getServerInfo(host: string, port: number): Promise<ServerInfoDto>{
     try {
       let data = await gamedig.query({
         type: 'minecraft',
@@ -65,9 +77,9 @@ export class ServersService {
     }
   }
 
-  async getInfo(){
+  async getInfo(): Promise<ServerInfoDto[]> {
     let servers = await this.serversEntity.findAll();
-    let data = [];
+    let data: ServerInfoDto[] = [];
     for(let i = 0; i< servers.length; i++){
       let { server_ip, server_port } = servers[i];
       let info = await this.getServerInfo(server_ip, server_port);
