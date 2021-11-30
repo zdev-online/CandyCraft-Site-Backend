@@ -1,5 +1,5 @@
 import { Column, Model, Table } from "sequelize-typescript";
-import { UUIDV4 } from "sequelize/types";
+import { UUIDV4 } from "sequelize";
 import { CreatePaymentDto } from "./dto/create-payment.dto";
 import { IPayment } from './payment.interface';
 

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ConfirmedEmail } from 'src/auth/confirmed-email.decorator';
 import { UserFromRequest } from 'src/users/dto/user-from-req.dto';
@@ -17,7 +17,7 @@ export class ShopController {
   @ConfirmedEmail()
   @UseGuards(AuthGuard)
   @Post('/buy/:id')
-  async buy(@Param('id') id: string, @User() user: UserFromRequest) {
-    return await this.shopService.buy(Number(id), user);
+  async buy(@Param('id') id: number, @Query('server') serverId: number,@User() user: UserFromRequest) {
+    return await this.shopService.buy(id, serverId, user);
   }
 }

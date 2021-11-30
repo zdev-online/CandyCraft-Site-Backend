@@ -16,6 +16,8 @@ import { SkinsModule } from './skins/skins.module';
 import { join } from 'path';
 import { PaymentService } from './payment/payment.service';
 import { PaymentModule } from './payment/payment.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggingInterceptor } from './logger.interceptor';
 
 @Module({
   imports: [
@@ -53,6 +55,9 @@ import { PaymentModule } from './payment/payment.module';
     PaymentModule,
   ],
   controllers: [],
-  providers: [AdminService, PaymentService],
+  providers: [{
+    provide: APP_INTERCEPTOR,
+    useClass: LoggingInterceptor
+  }],
 })
-export class AppModule {}
+export class AppModule { }

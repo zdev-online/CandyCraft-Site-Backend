@@ -1,8 +1,9 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/sequelize';
 import { createHash } from 'crypto';
 import { Sequelize } from 'sequelize';
 import { Users } from 'src/users/users.entity';
+import { TopcraftCallbackDto } from './dto/topcraft-callback.dto';
 import { UnitpayCallbackDto } from './dto/unitpay-callback.dto';
 import { Payment } from './payment.entity';
 
@@ -110,5 +111,32 @@ export class PaymentService {
 	private getUnitpaySignature(account: string, currency: string, desc: string, sum: number): string {
 		let signature: string = `${account}{up}${currency}{up}${desc}{up}${sum}{up}${process.env.UNITPAY_SECRET_KEY}`;
 		return createHash('sha256').update(signature).digest('hex');
+	}
+
+	async topcraftCallback(data: TopcraftCallbackDto){
+		const t = await this.connection.transaction();
+		try {
+			let signature = createHash('sha1').update(`${data.username}${data.timestamp}${process.env.TOP_CRAFT_KEY}`).digest('hex');
+			console.log(data);
+			console.log(signature);
+			if(signature != data.signature){
+				throw new BadRequestException('Неверная подпись');
+			}
+			let user = await this.usersEntity.findOne({ 
+				where: {
+					username: data.username
+				},
+				transaction: t
+			});
+
+			user.money += Number(process.env.TOP_CRAFT_AWARD);
+			
+			await user.save();
+			await t.commit();
+			return 'Успешное зачисление баллов';
+		} catch(e){
+			await t.rollback();
+			throw new InternalServerErrorException('Не удалось зачислить бонусные баллы');
+		}
 	}
 }
