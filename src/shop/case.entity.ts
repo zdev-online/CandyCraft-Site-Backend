@@ -18,4 +18,16 @@ export class Case extends Model<ICase, CreateCaseDto> {
 
   @Column({ allowNull: false, unique: true })
   position: number;
+
+  @Column({ allowNull: false })
+  command: string;
+
+  @Column({ allowNull: false })
+  chest_template: string;
+
+  @Column({ allowNull: false })
+  player_template: string;
+
+  @Column({ allowNull: false })
+  count_template: string;
 }

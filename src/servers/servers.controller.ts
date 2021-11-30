@@ -17,4 +17,9 @@ export class ServersController {
     let data = await this.serversService.findAll();
     return data.map((x) => ({ ...new ServerSerializer(x) }));
   }
+
+  @Get('/info')
+  async getInfo(){
+    return await this.serversService.getInfo();
+  }
 }

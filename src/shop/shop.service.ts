@@ -6,6 +6,7 @@ import {
 import { InjectConnection, InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize';
 import { PexService } from 'src/pex/pex.service';
+import { ServersService } from 'src/servers/servers.service';
 import { UserFromRequest } from 'src/users/dto/user-from-req.dto';
 import { User } from 'src/users/user.decorator';
 import { Users } from 'src/users/users.entity';
@@ -30,6 +31,7 @@ export class ShopService {
     @InjectModel(Kit) private kitEntity: typeof Kit,
     @InjectModel(Users) private usersEntity: typeof Users,
     private pexService: PexService,
+    private serversService: ServersService
   ) {}
 
   async findAll() {
@@ -83,8 +85,17 @@ export class ShopService {
     return result;
   }
 
-  async buy(id: number, @User() user: UserFromRequest) {
+  async buy(id: number, serverId: number, @User() user: UserFromRequest) {
+    // Поиск сервера
+    let data: any;
+    let server = await this.serversService.findById(serverId); 
+    if(!server){
+      throw new BadRequestException({
+        message: "Неверный ID - сервера"
+      });
+    }
     let userData = await this.usersEntity.findByPk(user.id);
+    // Поиск товара
     let product = await this.productEntity.findByPk(id);
     if (!product) {
       throw new BadRequestException({
@@ -97,11 +108,45 @@ export class ShopService {
     const transaction = await this.connection.transaction();
     try {
       if (product.type == 'donate') {
+        let donateProduct = await this.donateEntity.findByPk(product.product_id);
+        if(!donateProduct){
+          throw new BadRequestException({
+            message: 'Не товар найден'
+          });
+        }
+        if(!donateProduct.servers_id.split(',').includes(String(serverId))){
+          throw new BadRequestException({
+            message: 'Нельзя купить донат для этого сервера'
+          });
+        }
+        await this.pexService.addPlayerToGroup(server.pex_prefix, userData.uuid, donateProduct.pex_name);
+        data = {
+          ...donateProduct,
+          pex_name: undefined
+        }
       }
       if (product.type == 'case') {
+        let caseProduct = await this.caseEntity.findByPk(product.product_id);
+        if(!caseProduct){
+          throw new BadRequestException({
+            message: 'Не товар найден'
+          });
+        }
+        // Выдаем кейс
+
+        // await 
+
+        // Выдаем кейс
+        data = {
+          id: caseProduct.id,
+          name: caseProduct.name,
+          image: caseProduct.image,
+          rare: caseProduct.rare,
+          position: caseProduct.position
+        }
       }
       await transaction.commit();
-      return { message: 'Товар успешно преобретен', id };
+      return { message: 'Товар успешно преобретен', product, data };
     } catch (e) {
       await transaction.rollback();
       throw new InternalServerErrorException({

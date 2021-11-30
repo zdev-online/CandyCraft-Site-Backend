@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreateServerDto } from './dto/create-server.dto';
 import { Servers } from './servers.entity';
+import gamedig from 'gamedig';
 
 @Injectable()
 export class ServersService {
@@ -37,4 +38,41 @@ export class ServersService {
     await server.destroy();
     return server;
   }
+
+  private async getServerInfo(host: string, port: number){
+    try {
+      let data = await gamedig.query({
+        type: 'minecraft',
+        host,
+        port,
+      });
+      
+      return {
+        active: true,
+        max_players: data.maxplayers,
+        players: data.players,
+        ping: data.ping,
+        connect: data.connect
+      }
+    } catch(e){
+      return {
+        active: false,
+        max_players: 0,
+        players: [],
+        ping: 0,
+        connect: ''
+      }
+    }
+  }
+
+  async getInfo(){
+    let servers = await this.serversEntity.findAll();
+    let data = [];
+    for(let i = 0; i< servers.length; i++){
+      let { server_ip, server_port } = servers[i];
+      let info = await this.getServerInfo(server_ip, server_port);
+      data.push(info);
+    }
+    return data;
+  }  
 }

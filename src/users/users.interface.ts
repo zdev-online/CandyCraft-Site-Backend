@@ -7,4 +7,5 @@ export interface IUsers {
   confirmed: boolean;
   role: string;
   skin: string;
+  uuid: string;
 }
