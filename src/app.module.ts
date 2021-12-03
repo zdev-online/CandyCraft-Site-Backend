@@ -39,7 +39,7 @@ import { FilesModule } from './files/files.module';
       autoLoadModels: true,
       sync: {
         force: false,
-        alter: false
+        alter: false,
       },
       synchronize: true,
     }),
@@ -57,9 +57,11 @@ import { FilesModule } from './files/files.module';
     FilesModule,
   ],
   controllers: [],
-  providers: [{
-    provide: APP_INTERCEPTOR,
-    useClass: LoggingInterceptor
-  }],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+  ],
 })
-export class AppModule { }
+export class AppModule {}

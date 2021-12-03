@@ -17,7 +17,11 @@ export class ShopController {
   @ConfirmedEmail()
   @UseGuards(AuthGuard)
   @Post('/buy/:id')
-  async buy(@Param('id') id: number, @Query('server') serverId: number,@User() user: UserFromRequest) {
+  async buy(
+    @Param('id') id: number,
+    @Query('server') serverId: number,
+    @User() user: UserFromRequest,
+  ) {
     return await this.shopService.buy(id, serverId, user);
   }
 }

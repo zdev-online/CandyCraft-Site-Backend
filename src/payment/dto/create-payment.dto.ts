@@ -1,4 +1,4 @@
 export class CreatePaymentDto {
-    email: string;
-    sum: number;
+  email: string;
+  sum: number;
 }

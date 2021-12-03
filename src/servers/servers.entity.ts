@@ -26,7 +26,7 @@ export class Servers extends Model<IServers, CreateServerDto> {
   rcon_port: number;
 
   @Column({ allowNull: false, type: DataType.TEXT })
-  server_gif_path: string;
+  server_gif: string;
 
   @Column({ allowNull: false, defaultValue: true })
   active: boolean;

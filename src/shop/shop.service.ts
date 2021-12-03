@@ -31,8 +31,8 @@ export class ShopService {
     @InjectModel(Kit) private kitEntity: typeof Kit,
     @InjectModel(Users) private usersEntity: typeof Users,
     private pexService: PexService,
-    private serversService: ServersService
-  ) { }
+    private serversService: ServersService,
+  ) {}
 
   async findAll() {
     let result = [];
@@ -53,7 +53,7 @@ export class ShopService {
             case: {
               name: _case.name,
               image: _case.image,
-              position: _case.position
+              position: _case.position,
             },
             items,
           },
@@ -78,9 +78,9 @@ export class ShopService {
               commands: donate.commands,
               can_enter_full_server: donate.can_enter_full_server,
               can_save_inventory: donate.can_save_inventory,
-              position: donate.position
+              position: donate.position,
             },
-            kits
+            kits,
           },
         });
       }
@@ -94,7 +94,7 @@ export class ShopService {
     let server = await this.serversService.findById(serverId);
     if (!server) {
       throw new BadRequestException({
-        message: "Неверный ID - сервера"
+        message: 'Неверный ID - сервера',
       });
     }
     let userData = await this.usersEntity.findByPk(user.id);
@@ -111,41 +111,47 @@ export class ShopService {
     const transaction = await this.connection.transaction();
     try {
       if (product.type == 'donate') {
-        let donateProduct = await this.donateEntity.findByPk(product.product_id);
+        let donateProduct = await this.donateEntity.findByPk(
+          product.product_id,
+        );
         if (!donateProduct) {
           throw new BadRequestException({
-            message: 'Не товар найден'
+            message: 'Не товар найден',
           });
         }
         if (!donateProduct.servers_id.split(',').includes(String(serverId))) {
           throw new BadRequestException({
-            message: 'Нельзя купить донат для этого сервера'
+            message: 'Нельзя купить донат для этого сервера',
           });
         }
-        await this.pexService.addPlayerToGroup(server.pex_prefix, userData.uuid, donateProduct.pex_name);
+        await this.pexService.addPlayerToGroup(
+          server.pex_prefix,
+          userData.uuid,
+          donateProduct.pex_name,
+        );
         data = {
           ...donateProduct,
-          pex_name: undefined
-        }
+          pex_name: undefined,
+        };
       }
       if (product.type == 'case') {
         let caseProduct = await this.caseEntity.findByPk(product.product_id);
         if (!caseProduct) {
           throw new BadRequestException({
-            message: 'Не товар найден'
+            message: 'Не товар найден',
           });
         }
         // Выдаем кейс
 
-        // await 
+        // await
 
         // Выдаем кейс
         data = {
           id: caseProduct.id,
           name: caseProduct.name,
           image: caseProduct.image,
-          position: caseProduct.position
-        }
+          position: caseProduct.position,
+        };
       }
       await transaction.commit();
       return { message: 'Товар успешно преобретен', product, data };
@@ -162,12 +168,12 @@ export class ShopService {
     let product = await this.productEntity.create({
       type: 'donate',
       product_id: donate.id,
-      price
+      price,
     });
     return {
       product,
-      donate
-    }
+      donate,
+    };
   }
 
   async createCaseProduct(dto: CreateCaseDto, price: number) {
@@ -175,12 +181,12 @@ export class ShopService {
     let product = await this.productEntity.create({
       type: 'case',
       product_id: _case.id,
-      price
+      price,
     });
     return {
       product: product,
-      case: _case
-    }
+      case: _case,
+    };
   }
 
   async createItemsForCase(dto: CreateItemsDto[]): Promise<Items[]> {

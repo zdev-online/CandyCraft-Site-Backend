@@ -4,7 +4,7 @@ export class CreateCaseDto {
   @IsNotEmpty({ message: 'Укажите название кейса' })
   @IsString({ message: 'Укажите название кейса' })
   name: string;
-  
+
   @IsNotEmpty({ message: 'Укажите позицию кейса' })
   @IsNumber({}, { message: 'Укажите позицию кейса' })
   position: number;
@@ -21,10 +21,14 @@ export class CreateCaseDto {
   @IsString({ message: 'Укажите шаблон игрока. (Пример: %player_name%)' })
   player_template: string;
 
-  @IsNotEmpty({ message: 'Укажите шаблон количества сундуков. (Пример: %count%)' })
-  @IsString({ message: 'Укажите шаблон количества сундуков. (Пример: %count%)' })
+  @IsNotEmpty({
+    message: 'Укажите шаблон количества сундуков. (Пример: %count%)',
+  })
+  @IsString({
+    message: 'Укажите шаблон количества сундуков. (Пример: %count%)',
+  })
   count_template: string;
-  
+
   @IsNotEmpty({ message: 'Укажите изображение для кейса' })
   @IsString({ message: 'Укажите изображение для кейса' })
   image: string;

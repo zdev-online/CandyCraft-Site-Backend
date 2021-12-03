@@ -1,13 +1,25 @@
-import { Transform } from "class-transformer";
-import { IsString, IsArray, IsNotEmpty, IsBoolean, IsNumber } from "class-validator";
+import { Transform } from 'class-transformer';
+import {
+  IsString,
+  IsArray,
+  IsNotEmpty,
+  IsBoolean,
+  IsNumber,
+} from 'class-validator';
 
 export class CreateDonateDto {
   @IsNotEmpty({ message: 'Укажите название доната' })
   @IsString({ message: 'Укажите название доната' })
   name: string;
 
-  @IsNotEmpty({ message: 'ID серверов на которых доступен донат - дорлжны быть числовым массивом, состоящим из ID - серверов в БД' })
-  @IsArray({ message: 'ID серверов на которых доступен донат - дорлжны быть числовым массивом, состоящим из ID - серверов в БД' })
+  @IsNotEmpty({
+    message:
+      'ID серверов на которых доступен донат - дорлжны быть числовым массивом, состоящим из ID - серверов в БД',
+  })
+  @IsArray({
+    message:
+      'ID серверов на которых доступен донат - дорлжны быть числовым массивом, состоящим из ID - серверов в БД',
+  })
   @Transform(({ value }) => value.map((x: number) => x.toString()).join(','))
   servers_id: string;
 
@@ -23,8 +35,12 @@ export class CreateDonateDto {
   @IsString({ message: 'Укажите доступные команды доната' })
   commands: string;
 
-  @IsNotEmpty({ message: 'Укажите возможность зайти на полный сервер для доната' })
-  @IsBoolean({ message: 'Укажите возможность зайти на полный сервер для доната' })
+  @IsNotEmpty({
+    message: 'Укажите возможность зайти на полный сервер для доната',
+  })
+  @IsBoolean({
+    message: 'Укажите возможность зайти на полный сервер для доната',
+  })
   can_enter_full_server: boolean;
 
   @IsNotEmpty({ message: 'Укажите сохранить инвентарь для доната' })
@@ -43,7 +59,7 @@ export class CreateDonateDto {
   @IsString({ message: 'Укажите изображение для доната' })
   image: string;
 
-  @IsNotEmpty({ message: "Укажите цену доната" })
-  @IsNumber({}, { message: "Укажите цену доната" })
+  @IsNotEmpty({ message: 'Укажите цену доната' })
+  @IsNumber({}, { message: 'Укажите цену доната' })
   price: number;
 }

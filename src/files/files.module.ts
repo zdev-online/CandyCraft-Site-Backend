@@ -7,6 +7,6 @@ import { FilesService } from './files.service';
 @Module({
   imports: [SequelizeModule.forFeature([Files])],
   controllers: [FilesController],
-  providers: [FilesService]
+  providers: [FilesService],
 })
 export class FilesModule {}

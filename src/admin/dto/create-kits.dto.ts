@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsString } from "class-validator";
+import { IsArray, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateKitsDto {
   @IsNotEmpty({ message: 'Укажите название кита доната' })

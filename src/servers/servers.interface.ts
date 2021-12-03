@@ -6,7 +6,7 @@ export interface IServers {
   server_ip: string;
   server_port: number;
   rcon_port: number;
-  server_gif_path: string;
+  server_gif: string;
   active: boolean;
   game_version: string;
   mods: string;

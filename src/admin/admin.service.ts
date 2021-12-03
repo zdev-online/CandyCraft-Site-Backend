@@ -14,18 +14,14 @@ export class AdminService {
   constructor(
     private serversService: ServersService,
     private pexService: PexService,
-    private shopService: ShopService
-  ) { }
+    private shopService: ShopService,
+  ) {}
 
-  async createServer(
-    dto: CreateServerDto,
-    files: { server_gif: Express.Multer.File; media: Express.Multer.File[] },
-  ) {
+  async createServer(dto: CreateServerDto) {
     return await this.serversService.create({
       ...dto,
       mods: dto.mods.join(','),
-      media: files.media.map((x) => x.filename).join(','),
-      server_gif_path: files.server_gif[0].filename,
+      media: dto.media.join(','),
     });
   }
   async deleteServer(serverId: number) {
@@ -45,7 +41,6 @@ export class AdminService {
     donateDto: CreateDonateDto,
     kitsDto: CreateKitsDto[],
   ) {
-    
     // Проверяем есть ли сервер и такая донат группа
     donateDto.servers_id.split(',').map(async (x) => {
       let srvId = Number(x);
@@ -66,28 +61,34 @@ export class AdminService {
       }
     });
 
-    let data = await this.shopService.createDonateProduct(donateDto, donateDto.price);
-    let kits = await this.shopService.createKitsForDonate(kitsDto.map(x => ({...x, donate_id: data.donate.id })));
+    let data = await this.shopService.createDonateProduct(
+      donateDto,
+      donateDto.price,
+    );
+    let kits = await this.shopService.createKitsForDonate(
+      kitsDto.map((x) => ({ ...x, donate_id: data.donate.id })),
+    );
 
     return {
       message: `Товар "Донат" - добавлен в магазин`,
       ...data,
-      kits
-    }
+      kits,
+    };
   }
   async createCaseProduct(
     caseDto: CreateCaseDto,
     itemsDto: CreateItemsCaseDto[],
   ) {
-
     let data = await this.shopService.createCaseProduct(caseDto, caseDto.price);
-    let items = await this.shopService.createItemsForCase(itemsDto.map(x => ({ ...x, case_id: data.case.id })));
+    let items = await this.shopService.createItemsForCase(
+      itemsDto.map((x) => ({ ...x, case_id: data.case.id })),
+    );
 
-    return { 
+    return {
       message: `Товар "Кейс" - добавлен в магазин`,
       ...data,
-      items
-    }
+      items,
+    };
   }
   async deleteProductById(id: number) {
     return await this.shopService.deleteProductById(id);

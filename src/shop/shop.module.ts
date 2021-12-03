@@ -16,7 +16,7 @@ import { ShopService } from './shop.service';
   imports: [
     SequelizeModule.forFeature([Case, Product, Donate, Items, Kit, Users]),
     PexModule,
-    ServersModule
+    ServersModule,
   ],
   providers: [ShopService],
   controllers: [ShopController],

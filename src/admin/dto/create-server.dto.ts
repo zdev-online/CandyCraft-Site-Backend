@@ -33,10 +33,8 @@ export class CreateServerDto {
   game_version: string;
 
   @IsNotEmpty({
-    message:
-      'Список модов - должны быть массивом, который объеденен в строку через запятую',
+    message: 'Список модов - должны быть массивом строк',
   })
-  @Transform(({ value }) => String(value).split(','))
   @IsArray({ message: 'Список модов - должны быть массивом строк' })
   mods: string[];
 
@@ -44,4 +42,16 @@ export class CreateServerDto {
   @Transform(({ value }) => Number(value))
   @IsNumber({ allowNaN: false }, { message: 'Позиция - должна быть числом' })
   position: number;
+
+  @IsNotEmpty({ message: 'Укажите GIF для обложки сервера' })
+  @IsString({ message: 'Укажите GIF для обложки сервера' })
+  server_gif: string;
+
+  @IsNotEmpty({
+    message: 'Список медиа файлов - должен быть массивом названий файлов',
+  })
+  @IsArray({
+    message: 'Список медиа файлов - должен быть массивом названий файлов',
+  })
+  media: string[];
 }

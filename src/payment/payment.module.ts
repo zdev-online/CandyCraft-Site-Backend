@@ -8,6 +8,6 @@ import { PaymentService } from './payment.service';
 @Module({
   imports: [SequelizeModule.forFeature([Payment, Users])],
   controllers: [PaymentController],
-  providers: [PaymentService] 
+  providers: [PaymentService],
 })
 export class PaymentModule {}

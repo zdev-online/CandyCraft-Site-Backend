@@ -8,9 +8,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  FileFieldsInterceptor
-} from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import e from 'express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -28,28 +26,11 @@ import { AuthGuard } from 'src/auth/auth.guard';
 @UseGuards(AuthGuard)
 @Controller('admin')
 export class AdminController {
-  constructor(private adminService: AdminService) { }
+  constructor(private adminService: AdminService) {}
 
-  @UseInterceptors(
-    FileFieldsInterceptor(
-      [{ name: 'server_gif', maxCount: 1 }, { name: 'media' }],
-      {
-        storage: diskStorage({
-          destination: `uploads/servers`,
-          filename: (req: e.Request, file, callback) => {
-            return callback(null, `${v4()}${extname(file.originalname)}`);
-          },
-        }),
-      },
-    ),
-  )
   @Post('/servers/create')
-  async createServer(
-    @Body() dto: CreateServerDto,
-    @UploadedFiles()
-    files: { server_gif: Express.Multer.File; media: Express.Multer.File[] },
-  ) {
-    return await this.adminService.createServer(dto, files);
+  async createServer(@Body() dto: CreateServerDto) {
+    return await this.adminService.createServer(dto);
   }
 
   @Post('/servers/delete')
@@ -73,58 +54,19 @@ export class AdminController {
   }
 
   @Post('/shop/case/create')
-  @UseInterceptors(
-    FileFieldsInterceptor(
-      [{ name: 'case_image', maxCount: 1 }, { name: 'items_images' }],
-      {
-        storage: diskStorage({
-          destination: `uploads/shop`,
-          filename: (req: e.Request, file, callback) => {
-            return callback(null, `${v4()}${extname(file.originalname)}`);
-          },
-        }),
-      },
-    ),
-  )
   async createCaseProduct(
     @Body('case') caseDto: CreateCaseDto,
     @Body('items') itemsDto: CreateItemsCaseDto[],
-    @UploadedFiles()
-    files: {
-      case_image: Express.Multer.File;
-      items_images: Express.Multer.File[];
-    },
   ) {
-    return await this.adminService.createCaseProduct(
-      caseDto,
-      itemsDto,
-      files.case_image,
-      files.items_images,
-    );
+    return await this.adminService.createCaseProduct(caseDto, itemsDto);
   }
 
   @Post('/shop/donate/create')
-  @UseInterceptors(
-    FileFieldsInterceptor(
-      [{ name: 'donate_image', maxCount: 1 }, { name: 'kits_images' }],
-      {
-        storage: diskStorage({
-          destination: `uploads/shop`,
-          filename: (req: e.Request, file, callback) => {
-            return callback(null, `${v4()}${extname(file.originalname)}`);
-          },
-        }),
-      },
-    )
-  )
   async createDonateProduct(
     @Body('donate') donateDto: CreateDonateDto,
-    @Body('kits') kitsDto: CreateKitsDto[]
+    @Body('kits') kitsDto: CreateKitsDto[],
   ) {
-    return await this.adminService.createDonateProduct(
-      donateDto,
-      kitsDto,
-    );
+    return await this.adminService.createDonateProduct(donateDto, kitsDto);
   }
 
   @Get('/shop')

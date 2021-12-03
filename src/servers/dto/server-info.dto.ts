@@ -1,9 +1,9 @@
-import { Player } from "gamedig";
+import { Player } from 'gamedig';
 
 export class ServerInfoDto {
-    active: boolean;
-    max_players: number;
-    players: Player[];
-    ping: number;
-    connect: string;
+  active: boolean;
+  max_players: number;
+  players: Player[];
+  ping: number;
+  connect: string;
 }

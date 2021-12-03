@@ -19,7 +19,7 @@ export class ServersController {
   }
 
   @Get('/info')
-  async getInfo(){
+  async getInfo() {
     return await this.serversService.getInfo();
   }
 }

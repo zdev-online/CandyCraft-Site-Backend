@@ -30,9 +30,9 @@ export class ServersService {
 
   async update(dto: IServers): Promise<Servers> {
     let server = await this.serversEntity.findByPk(dto.id);
-    if(!server){
-      throw new BadRequestException({ 
-        message: 'Сервер с таким ID - не найден'
+    if (!server) {
+      throw new BadRequestException({
+        message: 'Сервер с таким ID - не найден',
       });
     }
     return await server.update(dto);
@@ -51,40 +51,43 @@ export class ServersService {
     return server;
   }
 
-  private async getServerInfo(host: string, port: number): Promise<ServerInfoDto>{
+  private async getServerInfo(
+    host: string,
+    port: number,
+  ): Promise<ServerInfoDto> {
     try {
       let data = await gamedig.query({
         type: 'minecraft',
         host,
         port,
       });
-      
+
       return {
         active: true,
         max_players: data.maxplayers,
         players: data.players,
         ping: data.ping,
-        connect: data.connect
-      }
-    } catch(e){
+        connect: data.connect,
+      };
+    } catch (e) {
       return {
         active: false,
         max_players: 0,
         players: [],
         ping: 0,
-        connect: ''
-      }
+        connect: '',
+      };
     }
   }
 
   async getInfo(): Promise<ServerInfoDto[]> {
     let servers = await this.serversEntity.findAll();
     let data: ServerInfoDto[] = [];
-    for(let i = 0; i< servers.length; i++){
+    for (let i = 0; i < servers.length; i++) {
       let { server_ip, server_port } = servers[i];
       let info = await this.getServerInfo(server_ip, server_port);
       data.push(info);
     }
     return data;
-  }  
+  }
 }
