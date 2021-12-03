@@ -3,11 +3,12 @@ import { InjectModel } from '@nestjs/sequelize';
 import { unlinkSync } from 'fs';
 import { extname } from 'path';
 import { join } from 'path/posix';
+import { Op } from 'sequelize';
 import { Files } from './files.entity';
 
 @Injectable()
 export class FilesService {
-  constructor(@InjectModel(Files) private filesEntity: typeof Files) {}
+  constructor(@InjectModel(Files) private filesEntity: typeof Files) { }
 
   async save(files: Express.Multer.File[]) {
     let promises = files.map((x) =>
@@ -24,7 +25,8 @@ export class FilesService {
         : { ...x, reason: x.reason },
     );
     if (results.some((x) => x.status == 'rejected')) {
-      files.forEach(async (x) => await this.deleteFromDisk(x.filename));
+      await this.deleteFromDisk(files.map(x => x.filename));
+      await this.deleteFromDB(files.map(x => x.filename));
       throw new InternalServerErrorException({
         message: 'Не удалось загрузить файлы',
         desc: 'Подробную ошибку ищите в логах сервера',
@@ -33,31 +35,31 @@ export class FilesService {
     return results.map((x) => (x.status == 'fulfilled' ? x.value : null));
   }
 
-  async deleteFromDisk(filename: string) {
+  async deleteFromDisk(filenames: string[]) {
     try {
-      unlinkSync(join(__dirname, '..', '..', 'uploads', filename));
-      return { message: `Файл ${filename} - успешно удалён с диска` };
+      filenames.forEach(x => unlinkSync(join(__dirname, '..', '..', 'uploads', x)));
+      return { message: `Файлы ${filenames.join(', ')} - успешно удалёны с диска` };
     } catch (e) {
-      console.error(`Не удалось удалить файл c диска - причина: ${e.message}`);
+      console.error(`Не удалось удалить файлы c диска - причина: ${e.message}`);
       throw new InternalServerErrorException({
-        message: 'Не удалось удалить файл',
+        message: 'Не удалось удалить файлы',
         desc: 'Посмотрите логи',
       });
     }
   }
 
-  async deleteFromDB(filename: string) {
+  async deleteFromDB(filenames: string[]) {
     try {
       await this.filesEntity.destroy({
         where: {
-          filename,
+          [Op.or]: filenames.map(x => ({ filename: x })),
         },
       });
-      return { message: `Файл ${filename} - успешно удален из базы` };
+      return { message: `Файлы ${filenames.join(', ')} - успешно удалены из базы` };
     } catch (e) {
-      console.error(`Не удалось удалить файл c бд - причина: ${e.message}`);
+      console.error(`Не удалось удалить файлы c бд - причина: ${e.message}`);
       throw new InternalServerErrorException({
-        message: 'Не удалось удалить файл',
+        message: 'Не удалось удалить файлы',
         desc: 'Посмотрите логи',
       });
     }
