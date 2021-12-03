@@ -32,7 +32,7 @@ export class ShopService {
     @InjectModel(Users) private usersEntity: typeof Users,
     private pexService: PexService,
     private serversService: ServersService
-  ) {}
+  ) { }
 
   async findAll() {
     let result = [];
@@ -50,10 +50,11 @@ export class ShopService {
           id,
           type: 'case',
           data: {
-            name: _case.name,
-            image: _case.image,
-            rare: _case.rare,
-            position: _case.position,
+            case: {
+              name: _case.name,
+              image: _case.image,
+              position: _case.position
+            },
             items,
           },
         });
@@ -69,15 +70,17 @@ export class ShopService {
           id,
           type: 'donate',
           data: {
-            name: donate.name,
-            servers_id: donate.servers_id,
-            desc_private: donate.desc_private,
-            desc_flags: donate.desc_flags,
-            commands: donate.commands,
-            can_enter_full_server: donate.can_enter_full_server,
-            can_save_inventory: donate.can_save_inventory,
-            position: donate.position,
-            kits,
+            donate: {
+              name: donate.name,
+              servers_id: donate.servers_id,
+              desc_private: donate.desc_private,
+              desc_flags: donate.desc_flags,
+              commands: donate.commands,
+              can_enter_full_server: donate.can_enter_full_server,
+              can_save_inventory: donate.can_save_inventory,
+              position: donate.position
+            },
+            kits
           },
         });
       }
@@ -88,8 +91,8 @@ export class ShopService {
   async buy(id: number, serverId: number, @User() user: UserFromRequest) {
     // Поиск сервера
     let data: any;
-    let server = await this.serversService.findById(serverId); 
-    if(!server){
+    let server = await this.serversService.findById(serverId);
+    if (!server) {
       throw new BadRequestException({
         message: "Неверный ID - сервера"
       });
@@ -109,12 +112,12 @@ export class ShopService {
     try {
       if (product.type == 'donate') {
         let donateProduct = await this.donateEntity.findByPk(product.product_id);
-        if(!donateProduct){
+        if (!donateProduct) {
           throw new BadRequestException({
             message: 'Не товар найден'
           });
         }
-        if(!donateProduct.servers_id.split(',').includes(String(serverId))){
+        if (!donateProduct.servers_id.split(',').includes(String(serverId))) {
           throw new BadRequestException({
             message: 'Нельзя купить донат для этого сервера'
           });
@@ -127,7 +130,7 @@ export class ShopService {
       }
       if (product.type == 'case') {
         let caseProduct = await this.caseEntity.findByPk(product.product_id);
-        if(!caseProduct){
+        if (!caseProduct) {
           throw new BadRequestException({
             message: 'Не товар найден'
           });
@@ -141,7 +144,6 @@ export class ShopService {
           id: caseProduct.id,
           name: caseProduct.name,
           image: caseProduct.image,
-          rare: caseProduct.rare,
           position: caseProduct.position
         }
       }
@@ -155,12 +157,30 @@ export class ShopService {
     }
   }
 
-  async createDonateProduct(dto: CreateDonateDto): Promise<Donate> {
-    return await this.donateEntity.create(dto);
+  async createDonateProduct(dto: CreateDonateDto, price: number) {
+    let donate = await this.donateEntity.create(dto);
+    let product = await this.productEntity.create({
+      type: 'donate',
+      product_id: donate.id,
+      price
+    });
+    return {
+      product,
+      donate
+    }
   }
 
-  async createCaseProduct(dto: CreateCaseDto): Promise<Case> {
-    return await this.caseEntity.create(dto);
+  async createCaseProduct(dto: CreateCaseDto, price: number) {
+    let _case = await this.caseEntity.create(dto);
+    let product = await this.productEntity.create({
+      type: 'case',
+      product_id: _case.id,
+      price
+    });
+    return {
+      product: product,
+      case: _case
+    }
   }
 
   async createItemsForCase(dto: CreateItemsDto[]): Promise<Items[]> {

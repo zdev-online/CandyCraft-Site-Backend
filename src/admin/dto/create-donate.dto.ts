@@ -8,7 +8,7 @@ export class CreateDonateDto {
 
   @IsNotEmpty({ message: 'ID серверов на которых доступен донат - дорлжны быть числовым массивом, состоящим из ID - серверов в БД' })
   @IsArray({ message: 'ID серверов на которых доступен донат - дорлжны быть числовым массивом, состоящим из ID - серверов в БД' })
-  @Transform(({ value }) => value.map((x: number)=> x.toString()).join(','))
+  @Transform(({ value }) => value.map((x: number) => x.toString()).join(','))
   servers_id: string;
 
   @IsNotEmpty({ message: 'Укажите описание приватов для доната' })
@@ -35,7 +35,15 @@ export class CreateDonateDto {
   @IsString({ message: 'Укажите название PEX - права для доната' })
   pex_name: string;
 
-  @IsNotEmpty({ message: 'Укажите позицию сервера' })
-  @IsNumber({}, { message: 'Укажите позицию сервера' })
+  @IsNotEmpty({ message: 'Укажите позицию доната' })
+  @IsNumber({}, { message: 'Укажите позицию доната' })
   position: number;
+
+  @IsNotEmpty({ message: 'Укажите изображение для доната' })
+  @IsString({ message: 'Укажите изображение для доната' })
+  image: string;
+
+  @IsNotEmpty({ message: "Укажите цену доната" })
+  @IsNumber({}, { message: "Укажите цену доната" })
+  price: number;
 }

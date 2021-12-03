@@ -7,14 +7,15 @@ import { CreateServerDto } from './dto/create-server.dto';
 import { CreateItemsCaseDto } from './dto/create-items-case.dto';
 import { CreateDonateDto } from './dto/create-donate.dto';
 import { CreateKitsDto } from './dto/create-kits.dto';
+import { InjectModel } from '@nestjs/sequelize';
 
 @Injectable()
 export class AdminService {
   constructor(
     private serversService: ServersService,
     private pexService: PexService,
-    private shopService: ShopService,
-  ) {}
+    private shopService: ShopService
+  ) { }
 
   async createServer(
     dto: CreateServerDto,
@@ -42,15 +43,10 @@ export class AdminService {
 
   async createDonateProduct(
     donateDto: CreateDonateDto,
-    kits: CreateKitsDto[],
-    donate_image: Express.Multer.File,
-    kits_images: Express.Multer.File[],
+    kitsDto: CreateKitsDto[],
   ) {
-    if (kits_images.length != kits.length) {
-      throw new BadRequestException({
-        message: 'Количество китов и количество их изображений - должны равны',
-      });
-    }
+    
+    // Проверяем есть ли сервер и такая донат группа
     donateDto.servers_id.split(',').map(async (x) => {
       let srvId = Number(x);
       let srv = await this.serversService.findById(srvId);
@@ -70,38 +66,28 @@ export class AdminService {
       }
     });
 
-    let donate = await this.shopService.createDonateProduct({
-      ...donateDto,
-      image: donate_image.filename,
-    });
-    let donate_kits = await this.shopService.createKitsForDonate(
-      kits.map((x, i) => ({ ...x, image: kits_images[i].filename })),
-    );
-    return { donate, kits: donate_kits };
+    let data = await this.shopService.createDonateProduct(donateDto, donateDto.price);
+    let kits = await this.shopService.createKitsForDonate(kitsDto.map(x => ({...x, donate_id: data.donate.id })));
+
+    return {
+      message: `Товар "Донат" - добавлен в магазин`,
+      ...data,
+      kits
+    }
   }
   async createCaseProduct(
     caseDto: CreateCaseDto,
     itemsDto: CreateItemsCaseDto[],
-    case_image: Express.Multer.File,
-    items_images: Express.Multer.File[],
   ) {
-    if (itemsDto.length != items_images.length) {
-      throw new BadRequestException({
-        message:
-          'Количество предметов кейса и количество их изображений - должны равны',
-      });
+
+    let data = await this.shopService.createCaseProduct(caseDto, caseDto.price);
+    let items = await this.shopService.createItemsForCase(itemsDto.map(x => ({ ...x, case_id: data.case.id })));
+
+    return { 
+      message: `Товар "Кейс" - добавлен в магазин`,
+      ...data,
+      items
     }
-    let new_case = await this.shopService.createCaseProduct({
-      ...caseDto,
-      image: case_image.filename,
-    });
-    let items = itemsDto.map((x, i) => ({
-      ...x,
-      case_id: new_case.id,
-      image: case_image[i],
-    }));
-    let case_items = await this.shopService.createItemsForCase(items);
-    return { case: new_case, items: case_items };
   }
   async deleteProductById(id: number) {
     return await this.shopService.deleteProductById(id);

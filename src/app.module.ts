@@ -18,6 +18,7 @@ import { PaymentService } from './payment/payment.service';
 import { PaymentModule } from './payment/payment.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './logger.interceptor';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -37,8 +38,8 @@ import { LoggingInterceptor } from './logger.interceptor';
       database: process.env.MYSQL_DATABASE,
       autoLoadModels: true,
       sync: {
-        // force: true,
-        alter: true
+        force: false,
+        alter: false
       },
       synchronize: true,
     }),
@@ -53,6 +54,7 @@ import { LoggingInterceptor } from './logger.interceptor';
     ShopModule,
     SkinsModule,
     PaymentModule,
+    FilesModule,
   ],
   controllers: [],
   providers: [{

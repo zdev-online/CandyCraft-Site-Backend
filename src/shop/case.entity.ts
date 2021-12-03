@@ -13,9 +13,6 @@ export class Case extends Model<ICase, CreateCaseDto> {
   @Column({ allowNull: false })
   image: string;
 
-  @Column({ allowNull: false })
-  rare: string;
-
   @Column({ allowNull: false, unique: true })
   position: number;
 

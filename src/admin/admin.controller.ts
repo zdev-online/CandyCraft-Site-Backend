@@ -9,8 +9,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import {
-  FileFieldsInterceptor,
-  FilesInterceptor,
+  FileFieldsInterceptor
 } from '@nestjs/platform-express';
 import e from 'express';
 import { diskStorage } from 'multer';
@@ -29,7 +28,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 @UseGuards(AuthGuard)
 @Controller('admin')
 export class AdminController {
-  constructor(private adminService: AdminService) {}
+  constructor(private adminService: AdminService) { }
 
   @UseInterceptors(
     FileFieldsInterceptor(
@@ -116,22 +115,15 @@ export class AdminController {
           },
         }),
       },
-    ),
+    )
   )
   async createDonateProduct(
     @Body('donate') donateDto: CreateDonateDto,
-    @Body('kits') kitsDto: CreateKitsDto[],
-    @UploadedFiles()
-    files: {
-      donate_image: Express.Multer.File;
-      kits_images: Express.Multer.File[];
-    },
+    @Body('kits') kitsDto: CreateKitsDto[]
   ) {
     return await this.adminService.createDonateProduct(
       donateDto,
       kitsDto,
-      files.donate_image,
-      files.kits_images,
     );
   }
 
