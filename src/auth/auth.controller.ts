@@ -122,8 +122,6 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT_AUTH')
   @ApiOperation({ description: 'Начать обновление пароля', summary: 'Начать обновление пароля' })
   @ApiOkResponse({ type: MessageResponseDto })
   @Get('/restore')
@@ -132,8 +130,6 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT_AUTH')
   @ApiOperation({ description: 'Завершить обновление пароля', summary: 'Завершить обновление пароля' })
   @ApiOkResponse({ type: MessageResponseDto })
   @Post('/restore')

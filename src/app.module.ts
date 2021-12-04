@@ -38,8 +38,8 @@ import { FilesModule } from './files/files.module';
       database: process.env.MYSQL_DATABASE,
       autoLoadModels: true,
       sync: {
-        force: false,
-        alter: false,
+        force: true,
+        alter: true
       },
       synchronize: true,
     }),
