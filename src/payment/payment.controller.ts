@@ -13,7 +13,7 @@ import {
   ApiTags,
   ApiBearerAuth,
   ApiOperation,
-  ApiOkResponse
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ConfirmedEmail } from 'src/auth/confirmed-email.decorator';
@@ -23,19 +23,25 @@ import { TopcraftCallbackDto } from './dto/topcraft-callback.dto';
 import { UnitpayCallbackDto } from './dto/unitpay-callback.dto';
 import { PaymentService } from './payment.service';
 
-@ApiTags('candy-craft')
+@ApiTags('payments')
 @Controller('payment')
 export class PaymentController {
-  constructor(private paymentService: PaymentService) { }
+  constructor(private paymentService: PaymentService) {}
 
   @ApiBearerAuth('JWT_AUTH')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ description: 'Получить ссылку на пополнение баланса через Unitpay', summary: 'Получить ссылку на пополнение баланса через Unitpay' })
+  @ApiOperation({
+    description: 'Получить ссылку на пополнение баланса через Unitpay',
+    summary: 'Получить ссылку на пополнение баланса через Unitpay',
+  })
   @ApiOkResponse({ type: String })
   @ConfirmedEmail()
   @UseGuards(AuthGuard)
   @Get('/link/unitpay')
-  async link(@User() user: UserFromRequest, @Query('sum') sum: number): Promise<string> {
+  async link(
+    @User() user: UserFromRequest,
+    @Query('sum') sum: number,
+  ): Promise<string> {
     return await this.paymentService.createPaymentLink(
       user.email,
       'RUB',

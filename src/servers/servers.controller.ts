@@ -3,20 +3,23 @@ import {
   ApiTags,
   ApiBearerAuth,
   ApiOperation,
-  ApiOkResponse
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import { FindServerByIdDto } from './dto/find-server-by-id.dto';
 import { ServerInfoDto } from './dto/server-info.dto';
 import { ServerSerializer } from './server.serializer';
 import { ServersService } from './servers.service';
 
-@ApiTags('candy-craft')
+@ApiTags('servers')
 @Controller('servers')
 export class ServersController {
-  constructor(private serversService: ServersService) { }
+  constructor(private serversService: ServersService) {}
 
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ description: 'Найти сервер по ID', summary: 'Найти сервер по ID' })
+  @ApiOperation({
+    description: 'Найти сервер по ID',
+    summary: 'Найти сервер по ID',
+  })
   @ApiOkResponse({ type: FindServerByIdDto })
   @Get('/:id')
   async findById(@Param('id') id: number): Promise<FindServerByIdDto> {
@@ -25,7 +28,10 @@ export class ServersController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ description: 'Получить все сервера', summary: 'Получить все сервера' })
+  @ApiOperation({
+    description: 'Получить все сервера',
+    summary: 'Получить все сервера',
+  })
   @ApiOkResponse({ type: [FindServerByIdDto] })
   @Get('/')
   async findAll(): Promise<FindServerByIdDto[]> {
@@ -34,7 +40,10 @@ export class ServersController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ description: 'Информация об онлайне серверов', summary: 'Информация об онлайне серверов' })
+  @ApiOperation({
+    description: 'Информация об онлайне серверов',
+    summary: 'Информация об онлайне серверов',
+  })
   @ApiOkResponse({ type: [ServerInfoDto] })
   @Get('/info')
   async getInfo(): Promise<ServerInfoDto[]> {

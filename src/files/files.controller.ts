@@ -15,7 +15,7 @@ import {
   ApiTags,
   ApiBearerAuth,
   ApiOperation,
-  ApiOkResponse
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import { Admin } from 'src/auth/admin.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -25,13 +25,16 @@ import { FilesService } from './files.service';
 import { Files } from './files.entity';
 
 @ApiBearerAuth('JWT_AUTH')
-@ApiTags('candy-craft')
+@ApiTags('files')
 @Controller('files')
 export class FilesController {
-  constructor(private fileService: FilesService) { }
+  constructor(private fileService: FilesService) {}
 
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ description: 'Загрузка файлов на сервер', summary: 'Загрузка файлов на сервер' })
+  @ApiOperation({
+    description: 'Загрузка файлов на сервер',
+    summary: 'Загрузка файлов на сервер',
+  })
   @ApiOkResponse({ type: [Files] })
   @Admin()
   @ConfirmedEmail()
@@ -61,7 +64,9 @@ export class FilesController {
     ),
   )
   @Post('/upload')
-  async uploadFile(@UploadedFiles() files: Express.Multer.File[]): Promise<Files[]> {
+  async uploadFile(
+    @UploadedFiles() files: Express.Multer.File[],
+  ): Promise<Files[]> {
     return await this.fileService.save(files);
   }
 }

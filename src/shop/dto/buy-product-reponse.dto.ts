@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Product } from "../product.entity";
+import { Product } from '../product.entity';
 
 export class BuyProductResponseDto {
   @ApiProperty()
@@ -7,7 +7,7 @@ export class BuyProductResponseDto {
 
   @ApiProperty()
   product: Product;
-  
+
   @ApiProperty()
   data: any;
 }

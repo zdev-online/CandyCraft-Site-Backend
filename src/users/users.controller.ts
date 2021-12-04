@@ -23,18 +23,18 @@ import {
   ApiTags,
   ApiBearerAuth,
   ApiOperation,
-  ApiOkResponse
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import { MessageResponseDto } from 'src/auth/dto/message-response.dto';
 import { ChangeSkinResponseDto } from './dto/change-skin-response.dto';
 
 @ApiBearerAuth('JWT_AUTH')
-@ApiTags('candy-craft')
+@ApiTags('users')
 @UseGuards(AuthGuard)
 @ConfirmedEmail()
 @Controller('users')
 export class UsersController {
-  constructor(private userService: UsersService) { }
+  constructor(private userService: UsersService) {}
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'Сменить пароль', summary: 'Сменить пароль' })

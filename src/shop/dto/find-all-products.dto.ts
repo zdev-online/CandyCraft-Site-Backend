@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Items } from "../items.entity";
-import { Kit } from "../kit.entity";
+import { Items } from '../items.entity';
+import { Kit } from '../kit.entity';
 
-class FindAllCaseDto  {
+class FindAllCaseDto {
   id: number;
   type: 'case';
   data: {
@@ -12,7 +12,7 @@ class FindAllCaseDto  {
       position: string;
     };
     items: Items[];
-  }
+  };
 }
 
 class FindAllDonateDto {
@@ -30,12 +30,12 @@ class FindAllDonateDto {
       position: number;
     };
     kits: Kit[];
-  }
-} 
+  };
+}
 
 export class FindAllProductsDto {
   @ApiProperty()
-  donate: FindAllDonateDto[]
+  donate: FindAllDonateDto[];
   @ApiProperty()
-  cases: FindAllCaseDto[]
+  cases: FindAllCaseDto[];
 }

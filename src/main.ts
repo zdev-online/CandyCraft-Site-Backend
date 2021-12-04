@@ -31,19 +31,21 @@ async function bootstrap() {
       .setVersion('1.0')
       .addTag('candy-craft')
       .addBearerAuth(
-        { 
-          description: `Bearer <JWT>`,
+        {
+          description: `Bearer <JWT_TOKEN>`,
           name: 'Authorization',
           bearerFormat: 'Bearer',
           scheme: 'Bearer',
-          type: 'http', 
-          in: 'Header'
+          type: 'http',
+          in: 'header',
         },
         'JWT_AUTH',
       )
       .build();
 
-    const document = SwaggerModule.createDocument(app, docsConfig, { deepScanRoutes: true });
+    const document = SwaggerModule.createDocument(app, docsConfig, {
+      deepScanRoutes: true,
+    });
     SwaggerModule.setup('docs', app, document);
   }
 

@@ -8,7 +8,7 @@ import { Files } from './files.entity';
 
 @Injectable()
 export class FilesService {
-  constructor(@InjectModel(Files) private filesEntity: typeof Files) { }
+  constructor(@InjectModel(Files) private filesEntity: typeof Files) {}
 
   async save(files: Express.Multer.File[]) {
     let promises = files.map((x) =>
@@ -25,8 +25,8 @@ export class FilesService {
         : { ...x, reason: x.reason },
     );
     if (results.some((x) => x.status == 'rejected')) {
-      await this.deleteFromDisk(files.map(x => x.filename));
-      await this.deleteFromDB(files.map(x => x.filename));
+      await this.deleteFromDisk(files.map((x) => x.filename));
+      await this.deleteFromDB(files.map((x) => x.filename));
       throw new InternalServerErrorException({
         message: 'Не удалось загрузить файлы',
         desc: 'Подробную ошибку ищите в логах сервера',
@@ -37,8 +37,12 @@ export class FilesService {
 
   async deleteFromDisk(filenames: string[]) {
     try {
-      filenames.forEach(x => unlinkSync(join(__dirname, '..', '..', 'uploads', x)));
-      return { message: `Файлы ${filenames.join(', ')} - успешно удалёны с диска` };
+      filenames.forEach((x) =>
+        unlinkSync(join(__dirname, '..', '..', 'uploads', x)),
+      );
+      return {
+        message: `Файлы ${filenames.join(', ')} - успешно удалёны с диска`,
+      };
     } catch (e) {
       console.error(`Не удалось удалить файлы c диска - причина: ${e.message}`);
       throw new InternalServerErrorException({
@@ -52,10 +56,12 @@ export class FilesService {
     try {
       await this.filesEntity.destroy({
         where: {
-          [Op.or]: filenames.map(x => ({ filename: x })),
+          [Op.or]: filenames.map((x) => ({ filename: x })),
         },
       });
-      return { message: `Файлы ${filenames.join(', ')} - успешно удалены из базы` };
+      return {
+        message: `Файлы ${filenames.join(', ')} - успешно удалены из базы`,
+      };
     } catch (e) {
       console.error(`Не удалось удалить файлы c бд - причина: ${e.message}`);
       throw new InternalServerErrorException({

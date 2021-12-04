@@ -7,7 +7,9 @@ export class CreateKitsDto {
   @IsString({ message: 'Укажите название кита доната' })
   name: string;
 
-  @ApiProperty({ examples: ['имя_файла_с_сервера.png', 'имя_файла_с_сервера.jpeg'] })
+  @ApiProperty({
+    examples: ['имя_файла_с_сервера.png', 'имя_файла_с_сервера.jpeg'],
+  })
   @IsNotEmpty({ message: 'Укажите изображение кита доната' })
   @IsArray({ message: 'Укажите изображение для кита доната' })
   image: string;

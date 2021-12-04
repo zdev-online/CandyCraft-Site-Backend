@@ -2,7 +2,6 @@ import { IsNotEmpty, IsNumber, IsString, IsArray } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-
 export class CreateServerDto {
   @ApiProperty({ examples: ['hitech', 'prefix1'] })
   @IsNotEmpty({ message: 'Префикс баз данных PEX - не может быть пустым' })
@@ -41,14 +40,19 @@ export class CreateServerDto {
   @IsString({ message: 'Версия игры - должна быть строкой' })
   game_version: string;
 
-  @ApiProperty({ examples: [['buildcraft', 'hitech'], ['hitech', 'industrial']] })
+  @ApiProperty({
+    examples: [
+      ['buildcraft', 'hitech'],
+      ['hitech', 'industrial'],
+    ],
+  })
   @IsNotEmpty({
     message: 'Список модов - должны быть массивом строк',
   })
   @IsArray({ message: 'Список модов - должны быть массивом строк' })
   mods: string[];
 
-  @ApiProperty({ examples: [1,2,3] })
+  @ApiProperty({ examples: [1, 2, 3] })
   @IsNotEmpty({ message: 'Укажите позицию в списке серверов' })
   @Transform(({ value }) => Number(value))
   @IsNumber({ allowNaN: false }, { message: 'Позиция - должна быть числом' })
@@ -59,7 +63,12 @@ export class CreateServerDto {
   @IsString({ message: 'Укажите GIF для обложки сервера' })
   server_gif: string;
 
-  @ApiProperty({ examples: [['имя_файла_с_сервера1.png', 'имя_файла_с_сервера.png'], ['имя_файла_с_сервера.jpeg']] })
+  @ApiProperty({
+    examples: [
+      ['имя_файла_с_сервера1.png', 'имя_файла_с_сервера.png'],
+      ['имя_файла_с_сервера.jpeg'],
+    ],
+  })
   @IsNotEmpty({
     message: 'Список медиа файлов - должен быть массивом названий файлов',
   })

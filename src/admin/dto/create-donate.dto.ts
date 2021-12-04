@@ -14,7 +14,7 @@ export class CreateDonateDto {
   @IsString({ message: 'Укажите название доната' })
   name: string;
 
-  @ApiProperty({ examples: [[1,3,9], [2], [2,3]] })
+  @ApiProperty({ examples: [[1, 3, 9], [2], [2, 3]] })
   @IsNotEmpty({
     message:
       'ID серверов на которых доступен донат - должен быть числовым массивом, состоящим из ID - серверов в БД',
@@ -60,12 +60,14 @@ export class CreateDonateDto {
   @IsString({ message: 'Укажите название PEX - права для доната' })
   pex_name: string;
 
-  @ApiProperty({ examples: [1,3,4] })
+  @ApiProperty({ examples: [1, 3, 4] })
   @IsNotEmpty({ message: 'Укажите позицию доната' })
   @IsNumber({}, { message: 'Укажите позицию доната' })
   position: number;
 
-  @ApiProperty({ examples: ['имя_файла_с_сервера.png', 'имя_файла_с_сервера.jpeg'] })
+  @ApiProperty({
+    examples: ['имя_файла_с_сервера.png', 'имя_файла_с_сервера.jpeg'],
+  })
   @IsNotEmpty({ message: 'Укажите изображение для доната' })
   @IsString({ message: 'Укажите изображение для доната' })
   image: string;

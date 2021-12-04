@@ -40,7 +40,7 @@ export class ShopService {
   async findAll(): Promise<FindAllProductsDto> {
     let result = {
       cases: [],
-      donate: []
+      donate: [],
     };
     let products = await this.productEntity.findAll();
     for (let i = 0; i < products.length; i++) {
@@ -94,7 +94,11 @@ export class ShopService {
     return result;
   }
 
-  async buy(id: number, serverId: number, @User() user: UserFromRequest): Promise<BuyProductResponseDto> {
+  async buy(
+    id: number,
+    serverId: number,
+    @User() user: UserFromRequest,
+  ): Promise<BuyProductResponseDto> {
     // Поиск сервера
     let data: any;
     let server = await this.serversService.findById(serverId);

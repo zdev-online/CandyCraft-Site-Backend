@@ -7,7 +7,7 @@ export class CreateCaseDto {
   @IsString({ message: 'Укажите название кейса' })
   name: string;
 
-  @ApiProperty({ examples: [1,2,3] })
+  @ApiProperty({ examples: [1, 2, 3] })
   @IsNotEmpty({ message: 'Укажите позицию кейса' })
   @IsNumber({}, { message: 'Укажите позицию кейса' })
   position: number;
@@ -36,7 +36,9 @@ export class CreateCaseDto {
   })
   count_template: string;
 
-  @ApiProperty({ examples: ['имя_файла_с_сервера.png', 'имя_файла_с_сервера.jpeg'] })
+  @ApiProperty({
+    examples: ['имя_файла_с_сервера.png', 'имя_файла_с_сервера.jpeg'],
+  })
   @IsNotEmpty({ message: 'Укажите изображение для кейса' })
   @IsString({ message: 'Укажите изображение для кейса' })
   image: string;

@@ -1,9 +1,18 @@
-import { Controller, Get, HttpCode, HttpStatus, Param, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiBearerAuth,
   ApiOperation,
-  ApiOkResponse
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ConfirmedEmail } from 'src/auth/confirmed-email.decorator';
@@ -13,13 +22,16 @@ import { BuyProductResponseDto } from './dto/buy-product-reponse.dto';
 import { FindAllProductsDto } from './dto/find-all-products.dto';
 import { ShopService } from './shop.service';
 
-@ApiTags('candy-craft')
+@ApiTags('shop')
 @Controller('shop')
 export class ShopController {
-  constructor(private shopService: ShopService) { }
+  constructor(private shopService: ShopService) {}
 
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ description: 'Получить все товары', summary: 'Получить все товары' })
+  @ApiOperation({
+    description: 'Получить все товары',
+    summary: 'Получить все товары',
+  })
   @ApiOkResponse({ type: FindAllProductsDto })
   @Get('/')
   async findAll() {

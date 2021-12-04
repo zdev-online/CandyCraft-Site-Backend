@@ -13,7 +13,7 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiOkResponse,
-  ApiHeader
+  ApiHeader,
 } from '@nestjs/swagger';
 import { CreateCaseDto } from './dto/create-case.dto';
 import { AdminService } from './admin.service';
@@ -29,12 +29,12 @@ import { CreateDonateResponseDto } from './dto/create-donate-response.dto';
 import { GetFullProductDto } from 'src/shop/dto/get-full-products.dto';
 
 @ApiBearerAuth('JWT_AUTH')
-@ApiTags('candy-craft')
+@ApiTags('admin')
 @Admin()
 @UseGuards(AuthGuard)
 @Controller('admin')
 export class AdminController {
-  constructor(private adminService: AdminService) { }
+  constructor(private adminService: AdminService) {}
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'Создать сервер', summary: 'Создать сервер' })
@@ -53,7 +53,10 @@ export class AdminController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ description: 'Изменить состояние сервера', summary: 'Изменить состояние сервера' })
+  @ApiOperation({
+    description: 'Изменить состояние сервера',
+    summary: 'Изменить состояние сервера',
+  })
   @ApiOkResponse({ type: Servers })
   @Post('/servers/state')
   async stateServer(@Body('id') id: number) {
@@ -61,7 +64,10 @@ export class AdminController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ description: 'Найти сервер по ID', summary: 'Найти сервер по ID' })
+  @ApiOperation({
+    description: 'Найти сервер по ID',
+    summary: 'Найти сервер по ID',
+  })
   @ApiOkResponse({ type: Servers })
   @Get('/servers/:id')
   async findServerById(@Param('id') id: string) {
@@ -69,7 +75,10 @@ export class AdminController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ description: 'Получить все сервера', summary: 'Получить все сервера' })
+  @ApiOperation({
+    description: 'Получить все сервера',
+    summary: 'Получить все сервера',
+  })
   @ApiOkResponse({ type: [Servers] })
   @Get('/servers')
   async findAllServers() {
@@ -99,7 +108,10 @@ export class AdminController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ description: 'Получить все товары магазина', summary: 'Получить все товары магазина' })
+  @ApiOperation({
+    description: 'Получить все товары магазина',
+    summary: 'Получить все товары магазина',
+  })
   @ApiOkResponse({ type: GetFullProductDto })
   @Get('/shop')
   async getAllProducts(): Promise<GetFullProductDto> {

@@ -9,16 +9,15 @@ export class SignInResponseDto {
 
   @ApiProperty()
   user: {
-
-      id: number;
-      confirmed: boolean;
-      email: string;
-      role: string;
-      userId: number;
-      username: string;
-      uuid: string;
+    id: number;
+    confirmed: boolean;
+    email: string;
+    role: string;
+    userId: number;
+    username: string;
+    uuid: string;
   };
-  
+
   @ApiProperty()
   message: string;
 }

@@ -88,7 +88,7 @@ export class ServersService {
     return this.serversInfo;
   }
 
-  private async poolServers(){
+  private async poolServers() {
     try {
       let servers = await this.serversEntity.findAll();
       for (let i = 0; i < servers.length; i++) {
