@@ -6,7 +6,7 @@ export class ServerSerializer {
   server_desc: string;
   server_ip: string;
   server_port: number;
-  server_gif_path: string;
+  server_gif: string;
   active: boolean;
   game_version: string;
   mods: string;
@@ -18,7 +18,7 @@ export class ServerSerializer {
     this.server_desc = options.server_desc;
     this.server_ip = options.server_ip;
     this.server_port = options.server_port;
-    this.server_gif_path = options.server_gif_path;
+    this.server_gif = options.server_gif;
     this.active = options.active;
     this.game_version = options.game_version;
     this.mods = options.mods;

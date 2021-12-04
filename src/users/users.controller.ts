@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  HttpCode,
+  HttpStatus,
   Post,
   UploadedFile,
   UseGuards,
@@ -17,21 +19,37 @@ import { User } from './user.decorator';
 import { Users } from './users.entity';
 import { UserFromRequest } from './dto/user-from-req.dto';
 import { extname } from 'path';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiOkResponse
+} from '@nestjs/swagger';
+import { MessageResponseDto } from 'src/auth/dto/message-response.dto';
+import { ChangeSkinResponseDto } from './dto/change-skin-response.dto';
 
+@ApiBearerAuth('JWT_AUTH')
+@ApiTags('candy-craft')
 @UseGuards(AuthGuard)
 @ConfirmedEmail()
 @Controller('users')
 export class UsersController {
-  constructor(private userService: UsersService) {}
+  constructor(private userService: UsersService) { }
 
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ description: 'Сменить пароль', summary: 'Сменить пароль' })
+  @ApiOkResponse({ type: MessageResponseDto })
   @Post('/change/password')
   async changePassword(
     @Body() changePasswordDto: ChangePasswordDto,
     @User() user: UserFromRequest,
-  ) {
+  ): Promise<MessageResponseDto> {
     return await this.userService.changePassword(user, changePasswordDto);
   }
 
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ description: 'Сменить скин', summary: 'Сменить скин' })
+  @ApiOkResponse({ type: ChangeSkinResponseDto })
   @UseInterceptors(
     FileInterceptor('skin', {
       storage: diskStorage({
@@ -53,7 +71,7 @@ export class UsersController {
   async changeSkin(
     @UploadedFile() file: Express.Multer.File,
     @User() user: UserFromRequest,
-  ) {
+  ): Promise<ChangeSkinResponseDto> {
     return await this.userService.changeSkin(user, file);
   }
 }

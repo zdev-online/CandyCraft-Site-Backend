@@ -12,10 +12,13 @@ import { User } from 'src/users/user.decorator';
 import { Users } from 'src/users/users.entity';
 import { Case } from './case.entity';
 import { Donate } from './donate.entity';
+import { BuyProductResponseDto } from './dto/buy-product-reponse.dto';
 import { CreateCaseDto } from './dto/create-case.dto';
 import { CreateDonateDto } from './dto/create-donate.dto';
 import { CreateItemsDto } from './dto/create-items.dto';
 import { CreateKitDto } from './dto/create-kit.dto';
+import { FindAllProductsDto } from './dto/find-all-products.dto';
+import { GetFullProductDto } from './dto/get-full-products.dto';
 import { Items } from './items.entity';
 import { Kit } from './kit.entity';
 import { Product } from './product.entity';
@@ -34,8 +37,11 @@ export class ShopService {
     private serversService: ServersService,
   ) {}
 
-  async findAll() {
-    let result = [];
+  async findAll(): Promise<FindAllProductsDto> {
+    let result = {
+      cases: [],
+      donate: []
+    };
     let products = await this.productEntity.findAll();
     for (let i = 0; i < products.length; i++) {
       let { id, product_id, type } = products[i];
@@ -46,7 +52,7 @@ export class ShopService {
             case_id: product_id,
           },
         });
-        result.push({
+        result.cases.push({
           id,
           type: 'case',
           data: {
@@ -66,7 +72,7 @@ export class ShopService {
             donate_id: product_id,
           },
         });
-        result.push({
+        result.donate.push({
           id,
           type: 'donate',
           data: {
@@ -88,7 +94,7 @@ export class ShopService {
     return result;
   }
 
-  async buy(id: number, serverId: number, @User() user: UserFromRequest) {
+  async buy(id: number, serverId: number, @User() user: UserFromRequest): Promise<BuyProductResponseDto> {
     // Поиск сервера
     let data: any;
     let server = await this.serversService.findById(serverId);
@@ -222,7 +228,7 @@ export class ShopService {
     return product;
   }
 
-  async getFullProducts() {
+  async getFullProducts(): Promise<GetFullProductDto> {
     let products = await this.productEntity.findAll();
 
     let donates = await this.donateEntity.findAll();

@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { unlinkSync } from 'fs';
 import { extname } from 'path';
-import { join } from 'path/posix';
+import { join } from 'path';
 import { Op } from 'sequelize';
 import { Files } from './files.entity';
 

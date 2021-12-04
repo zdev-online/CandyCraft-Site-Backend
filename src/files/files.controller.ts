@@ -1,5 +1,7 @@
 import {
   Controller,
+  HttpCode,
+  HttpStatus,
   Post,
   UploadedFiles,
   UseGuards,
@@ -9,16 +11,28 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import e from 'express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiOkResponse
+} from '@nestjs/swagger';
 import { Admin } from 'src/auth/admin.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ConfirmedEmail } from 'src/auth/confirmed-email.decorator';
 import { v4 } from 'uuid';
 import { FilesService } from './files.service';
+import { Files } from './files.entity';
 
+@ApiBearerAuth('JWT_AUTH')
+@ApiTags('candy-craft')
 @Controller('files')
 export class FilesController {
-  constructor(private fileService: FilesService) {}
+  constructor(private fileService: FilesService) { }
 
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ description: 'Загрузка файлов на сервер', summary: 'Загрузка файлов на сервер' })
+  @ApiOkResponse({ type: [Files] })
   @Admin()
   @ConfirmedEmail()
   @UseGuards(AuthGuard)
@@ -47,7 +61,7 @@ export class FilesController {
     ),
   )
   @Post('/upload')
-  async uploadFile(@UploadedFiles() files: Express.Multer.File[]) {
+  async uploadFile(@UploadedFiles() files: Express.Multer.File[]): Promise<Files[]> {
     return await this.fileService.save(files);
   }
 }

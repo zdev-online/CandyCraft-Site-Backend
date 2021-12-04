@@ -8,7 +8,11 @@ import { IServers } from './servers.interface';
 
 @Injectable()
 export class ServersService {
-  constructor(@InjectModel(Servers) private serversEntity: typeof Servers) {}
+  private serversInfo: ServerInfoDto[] = [];
+
+  constructor(@InjectModel(Servers) private serversEntity: typeof Servers) {
+    this.poolServers();
+  }
 
   async findAll(): Promise<Servers[]> {
     return await this.serversEntity.findAll();
@@ -81,13 +85,20 @@ export class ServersService {
   }
 
   async getInfo(): Promise<ServerInfoDto[]> {
-    let servers = await this.serversEntity.findAll();
-    let data: ServerInfoDto[] = [];
-    for (let i = 0; i < servers.length; i++) {
-      let { server_ip, server_port } = servers[i];
-      let info = await this.getServerInfo(server_ip, server_port);
-      data.push(info);
+    return this.serversInfo;
+  }
+
+  private async poolServers(){
+    try {
+      let servers = await this.serversEntity.findAll();
+      for (let i = 0; i < servers.length; i++) {
+        let { server_ip, server_port } = servers[i];
+        let info = await this.getServerInfo(server_ip, server_port);
+        this.serversInfo.push(info);
+      }
+      return this.serversInfo;
+    } finally {
+      setTimeout(this.poolServers, 1000 * 60 * 30);
     }
-    return data;
   }
 }
