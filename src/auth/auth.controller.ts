@@ -134,7 +134,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT_AUTH')
-  @ApiOperation({ description: 'Завершить обновление устройства', summary: 'Завершить обновление устройства' })
+  @ApiOperation({ description: 'Завершить обновление пароля', summary: 'Завершить обновление пароля' })
   @ApiOkResponse({ type: MessageResponseDto })
   @Post('/restore')
   async endRestorePassword(@Body() endRestoreDto: EndRestoreDto): Promise<MessageResponseDto> {
