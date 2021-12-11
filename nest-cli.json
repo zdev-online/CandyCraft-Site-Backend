@@ -2,7 +2,7 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "assets": ["mail/templates/**/*.ejs"],
+    "assets": ["mail/templates/**/*.ejs", ".example.env", ".dev.env", ".prod.env"],
     "watchAssets": true
   }
 }
