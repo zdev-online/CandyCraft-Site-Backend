@@ -17,6 +17,8 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiOkResponse,
+  ApiHeaders,
+  ApiHeader,
 } from '@nestjs/swagger';
 import { CreateUserRequestDto } from './dto/create-user-request.dto';
 import { AuthService } from 'src/auth/auth.service';
@@ -106,6 +108,10 @@ export class AuthController {
   @ApiOperation({
     description: 'Обновление Access и Refresh токенов',
     summary: 'Обновление Access и Refresh токенов',
+  })
+  @ApiHeader({ 
+    name: 'Refresh-Token',
+    required: true
   })
   @ApiOkResponse({ type: RefreshResponseDto })
   @Post('/refresh')

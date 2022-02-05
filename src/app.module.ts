@@ -24,6 +24,9 @@ import { FilesModule } from './files/files.module';
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
+      "serveStaticOptions": {
+        index: false
+      }
     }),
     ConfigModule.forRoot({
       envFilePath: `.${process.env.MODE}.env`,

@@ -21,7 +21,7 @@ export class ServersController {
     summary: 'Найти сервер по ID',
   })
   @ApiOkResponse({ type: FindServerByIdDto })
-  @Get('/:id')
+  @Get('/get/:id')
   async findById(@Param('id') id: number): Promise<FindServerByIdDto> {
     let data = await this.serversService.findById(id);
     return { ...new ServerSerializer(data) };
